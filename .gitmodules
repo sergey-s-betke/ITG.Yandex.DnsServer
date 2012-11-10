@@ -1,0 +1,9 @@
+[submodule "ITG.Yandex"]
+	path = ITG.Yandex
+	url = git@github.com:sergey-s-betke/ITG.Yandex.git
+[submodule "ITG.RegExps"]
+	path = ITG.RegExps
+	url = git@github.com:sergey-s-betke/ITG.RegExps.git
+[submodule "ITG.Utils"]
+	path = ITG.Utils
+	url = git@github.com:sergey-s-betke/ITG.Utils.git
