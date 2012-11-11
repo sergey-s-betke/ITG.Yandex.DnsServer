@@ -27,7 +27,12 @@ Import-Module `
 #	-IPv4Address '172.31.0.9' `
 #;
 
-'www2' `
-| Remove-YandexDnsServerResourceRecord `
+#'www2' `
+#| Remove-YandexDnsServerResourceRecord `
+#	-ZoneName 'csm.nov.ru' `
+#;
+
+Remove-YandexDnsServerResourceRecord `
 	-ZoneName 'csm.nov.ru' `
+    -Name 'www2' `
 ;

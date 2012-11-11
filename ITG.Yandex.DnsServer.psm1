@@ -208,6 +208,16 @@ function Remove-DnsServerResourceRecord {
 	}
 	process {
 		Write-Verbose "Удаляем запись $Name в зоне $ZoneName.";
+		if ( -not $DNSRecords ) {
+			$DNSRecords = Invoke-API `
+				-method 'nsapi/get_domain_records' `
+				-DomainName $ZoneName `
+				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+				-FailureMsgFilter { $_.page.domains.error } `
+				-ResultFilter { $_.page.domains.domain.response.record } `
+			;
+		};
 		$Name `
 		| % {
 			$DNSRecords `
