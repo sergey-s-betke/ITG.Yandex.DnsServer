@@ -66,7 +66,7 @@ function Add-DnsServerResourceRecordA {
 			Mandatory=$true
 			, ValueFromPipelineByPropertyName=$true
 		)]
-		[string[]]
+		[System.Net.IPAddress[]]
 		[ValidateNotNullOrEmpty()]
 		[Alias("Content")]
 		$IPv4Address
