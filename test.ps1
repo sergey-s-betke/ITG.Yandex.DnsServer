@@ -17,6 +17,12 @@ Import-Module `
 		-Path ( Split-Path -Path ( $myinvocation.mycommand.path ) -Parent ) `
 		-ChildPath 'ITG.Yandex.DnsServer' `
 	) `
+    -Prefix Yandex `
 	-Force `
 ;
 
+Add-YandexDnsServerResourceRecordA `
+    -ZoneName 'csm.nov.ru' `
+    -Name 'www2' `
+    -IPv4Address '172.31.0.8', '172.31.0.7' `
+;
