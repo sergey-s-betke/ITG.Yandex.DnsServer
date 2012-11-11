@@ -17,28 +17,29 @@ Import-Module `
 		-Path ( Split-Path -Path ( $myinvocation.mycommand.path ) -Parent ) `
 		-ChildPath 'ITG.Yandex.DnsServer' `
 	) `
-	-Prefix Yandex `
 	-Force `
+	-PassThru `
+| Get-ModuleReadme -OutDefaultFile `
 ;
 
-#Add-YandexDnsServerResourceRecordA `
+#Add-DnsServerResourceRecordA `
 #	-ZoneName 'csm.nov.ru' `
 #	-Name 'www2' `
 #	-IPv4Address '172.31.0.9' `
 #;
 
-#Add-YandexDnsServerResourceRecordAAAA `
+#Add-DnsServerResourceRecordAAAA `
 #	-ZoneName 'csm.nov.ru' `
 #	-Name 'www2' `
 #	-IPv6Address '::1' `
 #;
 
 #'www2' `
-#| Remove-YandexDnsServerResourceRecord `
+#| Remove-DnsServerResourceRecord `
 #	-ZoneName 'csm.nov.ru' `
 #;
 
-Remove-YandexDnsServerResourceRecord `
-	-ZoneName 'csm.nov.ru' `
-    -Name 'www2' `
-;
+#Remove-DnsServerResourceRecord `
+#	-ZoneName 'csm.nov.ru' `
+#    -Name 'www2' `
+#;
