@@ -14,12 +14,12 @@ param (
 
 Import-Module `
 	(Join-Path `
-		-Path ( Split-Path -Path ( $myinvocation.mycommand.path ) -Parent ) `
+		-Path ( Split-Path -Path ( $MyInvocation.MyCommand.Path ) -Parent ) `
 		-ChildPath 'ITG.Yandex.DnsServer' `
 	) `
 	-Force `
 	-PassThru `
-| Get-ModuleReadme -OutDefaultFile `
+| Get-Readme -OutDefaultFile `
 ;
 
 #Add-DnsServerResourceRecordA `

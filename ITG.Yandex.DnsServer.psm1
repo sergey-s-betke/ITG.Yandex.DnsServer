@@ -22,15 +22,11 @@ function Add-DnsServerResourceRecordA {
 					& [ttl =<время жизни записи>]
 					& content =<содержимое записи>
 		.Link
-			http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml
-			http://msdn.microsoft.com/en-us/library/windows/desktop/hh832244(v=vs.85).aspx
+			[API Яндекс.DNS - add_a_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml)
+		.Link
+			[MS PowerShell DnsServer - Add-DnsServerResourceRecordA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832244(v=vs.85).aspx)
 		.Example
-			Add-DnsServerResourceRecordA `
-				-ZoneName 'csm.nov.ru' `
-				-Name 'www2' `
-				-IPv4Address '172.31.0.8', '172.31.0.7' `
-				-TimeToLive 55 `
-			;
+			Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'www2' -IPv4Address '172.31.0.8', '172.31.0.7' -TimeToLive 55 ;
 	#>
 
 	[CmdletBinding(
@@ -122,25 +118,21 @@ function Add-DnsServerResourceRecordAAAA {
 			создания новой записи типа AAAA на "припаркованном" на Яндексе домене.
 		.Description
 			Метод (обёртка над Яндекс.API add_aaaa_record) предназначен для 
-			создания новой записи типа AAAA на "припаркованном" на Яндексе домене.
+			создания новой записи типа AAAA на "припаркованном" на Яндексе домене. 
 			Интерфейс командлета максимально приближен к аналогичному командлету 
 			модуля DnsServer Windows Server 2012. 
-			Синтаксис запроса
+			Синтаксис запроса: 
 				https://pddimp.yandex.ru/nsapi/add_aaaa_record.xml ? token =<токен>
 					& domain =<имя домена>
 					& [subdomain =<имя субдомена>]
 					& [ttl =<время жизни записи>]
 					& content =<содержимое записи>
 		.Link
-			http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_aaaa_record.xml
-			http://msdn.microsoft.com/en-us/library/windows/desktop/hh832245(v=vs.85).aspx
+			[API Яндекс.DNS - add_aaaa_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_aaaa_record.xml)
+		.Link
+			[MS PowerShell DnsServer - Add-DnsServerResourceRecordAAAA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832245(v=vs.85).aspx)
 		.Example
-			Add-DnsServerResourceRecordAAAA `
-				-ZoneName 'csm.nov.ru' `
-				-Name 'www2' `
-				-IPv6Address '::1' `
-				-TimeToLive 55 `
-			;
+			Add-DnsServerResourceRecordAAAA -ZoneName 'csm.nov.ru' -Name 'www2' -IPv6Address '::1';
 	#>
 
 	[CmdletBinding(
@@ -235,21 +227,17 @@ function Remove-DnsServerResourceRecord {
 			удаления записи из зоны "припаркованного" на Яндексе домене. 
 			Интерфейс командлета максимально приближен к аналогичному командлету 
 			модуля DnsServer Windows Server 2012. 
-			Синтаксис запроса
+			Синтаксис запроса: 
 				https://pddimp.yandex.ru/nsapi/delete_record.xml ?
 					token =<токен пользователя> 
 					& domain =<имя домена>
 					& record_id =<id записи>
 		.Link
-			http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml
-			http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144(v=vs.85).aspx
+			[API Яндекс.DNS - delete_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml)
+		.Link
+			[MS PowerShell DnsServer - Remove-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144(v=vs.85).aspx)
 		.Example
-			'www2','www3' `
-			| Remove-YandexDnsServerResourceRecord `
-				-ZoneName 'csm.nov.ru' `
-				-RecordData '172.31.0.9','172.31.0.8' `
-				-RRType 'A' `
-			;
+			'www2','www3' | Remove-YandexDnsServerResourceRecord -ZoneName 'csm.nov.ru' -RecordData '172.31.0.9','172.31.0.8' -RRType 'A';
 	#>
 
 	[CmdletBinding(
