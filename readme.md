@@ -145,7 +145,7 @@ API Яндекс.DNS для доменов
 ##### Связанные ссылки
 
 - [API Яндекс.DNS - delete_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml)
-- [MS PowerShell DnsServer - Remove-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144(v=vs.85).aspx)
+- [MS PowerShell DnsServer - Remove-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144.aspx)
 			
 #### Add-DnsServerResourceRecordA
 
@@ -242,7 +242,7 @@ API Яндекс.DNS для доменов
 ##### Связанные ссылки
 
 - [API Яндекс.DNS - add_a_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml)
-- [MS PowerShell DnsServer - Add-DnsServerResourceRecordA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832244(v=vs.85).aspx)
+- [MS PowerShell DnsServer - Add-DnsServerResourceRecordA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832244.aspx)
 			
 #### Add-DnsServerResourceRecordAAAA
 
@@ -339,6 +339,6 @@ API Яндекс.DNS для доменов
 ##### Связанные ссылки
 
 - [API Яндекс.DNS - add_aaaa_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_aaaa_record.xml)
-- [MS PowerShell DnsServer - Add-DnsServerResourceRecordAAAA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832245(v=vs.85).aspx)
+- [MS PowerShell DnsServer - Add-DnsServerResourceRecordAAAA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832245.aspx)
 
 
