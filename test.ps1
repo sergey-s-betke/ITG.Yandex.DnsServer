@@ -22,6 +22,9 @@ Import-Module `
 | Get-Readme -OutDefaultFile `
 ;
 
+Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A','CNAME','NS' `
+| Out-GridView;
+
 #Add-DnsServerResourceRecordA `
 #	-ZoneName 'csm.nov.ru' `
 #	-Name 'www2' `

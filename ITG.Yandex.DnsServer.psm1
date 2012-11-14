@@ -3,6 +3,85 @@
 , 'ITG.Utils' `
 | Import-Module;
 
+function Get-DnsServerResourceRecord {
+	<#
+		.Component
+			API Яндекс.DNS для доменов
+		.Synopsis
+			Метод (обёртка над Яндекс.API get_domain_records) предназначен для 
+			получения записей из зоны "припаркованного" на Яндексе домене.
+		.Description
+			Метод (обёртка над Яндекс.API get_domain_records) предназначен для 
+			получения записей из зоны "припаркованного" на Яндексе домене. 
+			Интерфейс командлета максимально приближен к аналогичному командлету 
+			модуля DnsServer Windows Server 2012. 
+		.Link
+			[API Яндекс.DNS - get_domain_records](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_get_domain_records.xml)
+		.Link
+			[MS PowerShell DnsServer - Get-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832924.aspx)
+		.Example
+			Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
+	#>
+
+	[CmdletBinding(
+	)]
+	
+	param (
+		# имя домена, зарегистрированного на сервисах Яндекса
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
+		[Alias("domain_name")]
+		[Alias("DomainName")]
+		[Alias("Domain")]
+		$ZoneName
+	,
+		# имя записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String[]]
+		[ValidateNotNullOrEmpty()]
+		[Alias("SubDomain")]
+		$Name
+	,
+		# тип записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String[]]
+		[ValidateSet('MX', 'A', 'AAAA', 'CNAME', 'SRV', 'TXT', 'NS')]
+		$RRType
+	)
+
+	process {
+		Invoke-API `
+			-method 'nsapi/get_domain_records' `
+			-DomainName $ZoneName `
+			-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+			-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+			-FailureMsgFilter { $_.page.domains.error } `
+			-ResultFilter { $_.page.domains.domain.response.record } `
+		| Select-Object -Property `
+			@{ Name='HostName'; Expression={ [String]$_.subdomain } } `
+			, @{ Name='RecordType'; Expression={ [String]$_.type } } `
+			, @{ Name='RecordClass'; Expression={ 'IN' } } `
+			, @{ Name='RecordData'; Expression={ [String]$_.'#text' } } `
+			, @{ Name='TimeToLive'; Expression={ [System.TimeSpan]::FromSeconds( $_.ttl ) } } `
+			, @{ Name='Timestamp'; Expression={ $null } } `
+			, 'priority' `
+			, 'id' `
+		| ? { ( -not $Name.Count ) -or ( $Name -contains $_.HostName ) } `
+		| ? { ( -not $RRType.Count ) -or ( $RRType -contains $_.RecordType ) } `
+		;
+	}
+}
+
 function Add-DnsServerResourceRecordA {
 	<#
 		.Component
@@ -348,7 +427,7 @@ function Remove-DnsServerResourceRecord {
 		.Link
 			[MS PowerShell DnsServer - Remove-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144.aspx)
 		.Example
-			'www2','www3' | Remove-YandexDnsServerResourceRecord -ZoneName 'csm.nov.ru' -RecordData '172.31.0.9','172.31.0.8' -RRType 'A';
+			'www2','www3' | Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RecordData '172.31.0.9','172.31.0.8' -RRType 'A';
 	#>
 
 	[CmdletBinding(
@@ -454,7 +533,8 @@ function Remove-DnsServerResourceRecord {
 }
 
 Export-ModuleMember `
-	Add-DnsServerResourceRecordA `
+	Get-DnsServerResourceRecord `
+	, Add-DnsServerResourceRecordA `
 	, Add-DnsServerResourceRecordAAAA `
 	, Add-DnsServerResourceRecordCName `
 	, Remove-DnsServerResourceRecord `
