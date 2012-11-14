@@ -215,6 +215,117 @@ function Add-DnsServerResourceRecordAAAA {
 	}
 }
 
+function Add-DnsServerResourceRecordCName {
+	<#
+		.Component
+			API Яндекс.DNS для доменов
+		.Synopsis
+			Метод (обёртка над Яндекс.API add_cname_record) предназначен для 
+			создания новой записи типа CNAME на "припаркованном" на Яндексе домене.
+		.Description
+			Метод (обёртка над Яндекс.API add_cname_record) предназначен для 
+			создания новой записи типа A на "припаркованном" на Яндексе домене. 
+			Интерфейс командлета максимально приближен к аналогичному командлету 
+			модуля DnsServer Windows Server 2012. 
+			Есть некоторая особенность в API Яндекса - он позволяет создавать CName только 
+			для FQDN. Другими словами, создать "короткий" CName со ссылкой на запись того же 
+			домена нельзя, только через FQDN. Данная функция проверяет значение параметра Name 
+			и в том случае, если в конце не '.' (то есть - не FQDN), к значению предварительно 
+			дописывает ZoneName + '.'. Введён данный функционал для обеспечения совместимости с 
+			командлетами DnsServer. 
+			Синтаксис запроса: 
+				https://pddimp.yandex.ru/nsapi/add_cname_record.xml ?
+					token =<токен>
+					& domain =<имя домена>
+					& [subdomain =<имя субдомена>]
+					& [ttl =<время жизни записи>]
+					& content =<содержимое записи>
+		.Link
+			[API Яндекс.DNS - add_cname_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_cname_record.xml)
+		.Link
+			[MS PowerShell DnsServer - Add-DnsServerResourceRecordCName](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832246.aspx)
+		.Example
+			Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www2' -Name 'www';
+			Создаём CName www2 как псевдоним к www.csm.nov.ru.
+	#>
+
+	[CmdletBinding(
+		SupportsShouldProcess=$true
+		, ConfirmImpact="Medium"
+	)]
+	
+	param (
+		# имя домена, зарегистрированного на сервисах Яндекса
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
+		[Alias("domain_name")]
+		[Alias("DomainName")]
+		[Alias("Domain")]
+		$ZoneName
+	,
+		# имя записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias("SubDomain")]
+		$HostAliasName
+	,
+		# имя записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias("Content")]
+		$Name
+	,
+		# TTL записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+#		[System.TimeSpan]
+		[Alias("TTL")]
+		$TimeToLive
+#	,
+#		# передавать ли описатель созданной записи в конвейер
+#		[switch]
+#		$PassThru
+	)
+
+	process {
+		if ( -not $Name.EndsWith( '.' ) ) { $Name = "$Name.$ZoneName."; };
+		Write-Verbose "Создаём CNAME запись $HostAliasName в зоне $ZoneName ($Name).";
+		$APIParams = @{
+			subdomain = $HostAliasName;
+			content = $Name;
+		};
+		if ( $TimeToLive -ne $null ) {
+			if ( $TimeToLive -isnot [System.TimeSpan] ) {
+				$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
+			};
+			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
+		}
+		Invoke-API `
+			-method 'nsapi/add_cname_record' `
+			-DomainName $ZoneName `
+			-Params $APIParams `
+			-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+			-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+			-FailureMsgFilter { $_.page.domains.error } `
+		;
+#		if ( $PassThru ) { $input };
+	}
+}
+
 function Remove-DnsServerResourceRecord {
 	<#
 		.Component
@@ -318,9 +429,10 @@ function Remove-DnsServerResourceRecord {
 		};
 		$Name `
 		| % {
+			$CurrentName = $_;
 			$DNSRecords `
 			| ? {
-				( $_.subdomain -eq $Name ) `
+				( $_.subdomain -eq $CurrentName ) `
 				-and ( ( -not $RRType ) -or ( $_.type -eq $RRType ) ) `
 				-and ( ( -not $RecordData ) -or ( $RecordData -contains $_.'#text' ) ) `
 			} `
@@ -344,5 +456,6 @@ function Remove-DnsServerResourceRecord {
 Export-ModuleMember `
 	Add-DnsServerResourceRecordA `
 	, Add-DnsServerResourceRecordAAAA `
+	, Add-DnsServerResourceRecordCName `
 	, Remove-DnsServerResourceRecord `
 ;

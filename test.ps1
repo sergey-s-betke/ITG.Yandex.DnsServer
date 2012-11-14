@@ -19,7 +19,7 @@ Import-Module `
 	) `
 	-Force `
 	-PassThru `
-| Get-Readme -OutDefaultFile `
+#| Get-Readme -OutDefaultFile `
 ;
 
 #Add-DnsServerResourceRecordA `
@@ -39,7 +39,10 @@ Import-Module `
 #	-ZoneName 'csm.nov.ru' `
 #;
 
-#Remove-DnsServerResourceRecord `
-#	-ZoneName 'csm.nov.ru' `
-#    -Name 'www2' `
-#;
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www3' -Name 'mail.csm.nov.ru.';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www4' -Name 'mail';
+
+Remove-DnsServerResourceRecord `
+	-ZoneName 'csm.nov.ru' `
+    -Name 'www2', 'www3', 'www4' `
+;
