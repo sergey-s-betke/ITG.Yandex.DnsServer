@@ -18,36 +18,46 @@ Import-Module `
 		-ChildPath 'ITG.Yandex.DnsServer' `
 	) `
 	-Force `
-	-PassThru `
-| Get-Readme -OutDefaultFile `
-;
+#	-PassThru `
+#| Get-Readme -OutDefaultFile `
+#;
 
-Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A','CNAME','NS' `
-| Out-GridView;
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A','CNAME','NS' `
+#| Out-GridView;
 
 #Add-DnsServerResourceRecordA `
 #	-ZoneName 'csm.nov.ru' `
 #	-Name 'www2' `
 #	-IPv4Address '172.31.0.9' `
 #;
-
+#
 #Add-DnsServerResourceRecordAAAA `
 #	-ZoneName 'csm.nov.ru' `
-#	-Name 'www2' `
+#	-Name 'www3' `
 #	-IPv6Address '::1' `
 #;
+<#
+ещё возможен и такой ответ Яндекса, его так же неплохобы корректно обрабатывать.
+VERBOSE: Ответ API  <?xml version="1.0" encoding="utf-8"?>
+<page>
+    
+    <xscript_invoke_failed error="block is timed out" block="block" method="ApiNsGetRecords" object="Yandex/PDDImport.id" timeout="5000"/>
+</page>
+#>
 
-#'www2' `
-#| Remove-DnsServerResourceRecord `
-#	-ZoneName 'csm.nov.ru' `
-#;
+Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2','www3' `
+| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A' -PassThru -WhatIf `
+| Out-GridView;
+;
+
+#| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2';
 
 #Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www3' -HostAliasName 'mail.csm.nov.ru.';
 #Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www4' -HostAliasName 'www3';
 
 #Remove-DnsServerResourceRecord `
 #	-ZoneName 'csm.nov.ru' `
-#    -Name 'www2', 'www3', 'www4' `
+#    -Name 'www2' `
 #;
 
 # примеры использования DnsServer http://gallery.technet.microsoft.com/scriptcenter/DNS-Server-PowerShell-afc2142b

@@ -427,19 +427,18 @@ function Remove-DnsServerResourceRecord {
 		.Link
 			[MS PowerShell DnsServer - Remove-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144.aspx)
 		.Example
-			'www2','www3' | Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RecordData '172.31.0.9','172.31.0.8' -RRType 'A';
+			Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2','www3' | Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
 	#>
 
 	[CmdletBinding(
 		SupportsShouldProcess=$true
-		, ConfirmImpact="Medium"
+		, ConfirmImpact='High'
 	)]
 	
 	param (
 		# имя домена, зарегистрированного на сервисах Яндекса
 		[Parameter(
 			Mandatory=$true
-			, ValueFromPipelineByPropertyName=$true
 		)]
 		[string]
 		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
@@ -452,11 +451,11 @@ function Remove-DnsServerResourceRecord {
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipelineByPropertyName=$true
-			, ValueFromPipeline=$true
 		)]
-		[string[]]
+		[string]
 		[ValidateNotNullOrEmpty()]
 		[Alias("SubDomain")]
+		[Alias("HostName")]
 		$Name
 	,
 		# тип записи
@@ -466,6 +465,7 @@ function Remove-DnsServerResourceRecord {
 		)]
 		[string]
 		[ValidateSet('MX', 'A', 'AAAA', 'CNAME', 'SRV', 'TXT', 'NS')]
+		[Alias("RecordType")]
 		$RRType
 	,
 		# содержимое удаляемой записи для точного определения удаляемой записи
@@ -476,56 +476,54 @@ function Remove-DnsServerResourceRecord {
 		[string[]]
 		$RecordData
 	,
+		# id записи. Параметр специфичен только для реализации Яндекс.API. 
+		# Получен должен быть через Get-DnsServerResourceRecord.
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		$id
+	,
 		# передавать ли наименование записи дальше по конвейеру
 		[switch]
 		$PassThru
-#	,
-#		[switch]
-#		$Force
+	,
+		# На данный момент параметр не используется. В дальнейшем - удаление созданных Яндексом записей
+		# при подключении домена возможно будет только с данным флагом
+		[switch]
+		$Force
 	)
 
-	begin {
-		$DNSRecords = Invoke-API `
-			-method 'nsapi/get_domain_records' `
-			-DomainName $ZoneName `
-			-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-			-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-			-FailureMsgFilter { $_.page.domains.error } `
-			-ResultFilter { $_.page.domains.domain.response.record } `
-		;
-	}
 	process {
-		Write-Verbose "Удаляем запись $Name в зоне $ZoneName.";
-		if ( -not $DNSRecords ) {
-			$DNSRecords = Invoke-API `
-				-method 'nsapi/get_domain_records' `
-				-DomainName $ZoneName `
-				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-				-FailureMsgFilter { $_.page.domains.error } `
-				-ResultFilter { $_.page.domains.domain.response.record } `
+		if ( -not $id ) {
+			Get-DnsServerResourceRecord `
+				-ZoneName $ZoneName `
+				-Name $Name `
+				-RRType $RRType `
+			| Remove-DnsServerResourceRecord `
+				-ZoneName 'csm.nov.ru' `
+				-RecordData $RecordData `
 			;
-		};
-		$Name `
-		| % {
-			$CurrentName = $_;
-			$DNSRecords `
-			| ? {
-				( $_.subdomain -eq $CurrentName ) `
-				-and ( ( -not $RRType ) -or ( $_.type -eq $RRType ) ) `
-				-and ( ( -not $RecordData ) -or ( $RecordData -contains $_.'#text' ) ) `
-			} `
-			| % {
-				Invoke-API `
-					-method 'nsapi/delete_record' `
-					-DomainName $ZoneName `
-					-Params @{
-						record_id = ( $_.id );
-					} `
-					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-					-FailureMsgFilter { $_.page.domains.error } `
-				;
+		} else {
+			if (
+				( $Name -eq $_.HostName ) `
+				-and ( ( -not $RRType ) -or ( $RRType -eq $_.RecordType ) ) `
+				-and ( ( -not $RecordData ) -or ( $RecordData -contains $_.RecordData ) ) `
+			) { `
+				if ( $PSCmdlet.ShouldProcess( "$Name (в зоне $ZoneName)", 'Удалить' ) ) {
+					Write-Verbose "Удаляем запись $Name в зоне $ZoneName.";
+					Invoke-API `
+						-method 'nsapi/delete_record' `
+						-DomainName $ZoneName `
+						-Params @{
+							record_id = $id;
+						} `
+						-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+						-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+						-FailureMsgFilter { $_.page.domains.error } `
+					;
+				};
 			};
 		};
 		if ( $PassThru ) { $input };
