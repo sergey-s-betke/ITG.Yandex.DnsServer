@@ -6,7 +6,7 @@
 Windows Server 2012, но на базе DNS серверов Яндекса (естественно, с ограничениями),
 интерфейс максимально приближен к интерфейсу командлет модуля DNSServer.
 
-Версия модуля: **1.3.0**
+Версия модуля: **1.3.1**
 
 Функции модуля
 --------------
@@ -45,7 +45,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 Метод (обёртка над Яндекс.API add_cname_record) предназначен для 
 создания новой записи типа CNAME на "припаркованном" на Яндексе домене.
 	
-	Add-DnsServerResourceRecordCName [-ZoneName] <String> [-HostAliasName] <String> [-Name] <String> [[-TimeToLive] <Object>] [-WhatIf] [-Confirm] <CommonParameters>
+	Add-DnsServerResourceRecordCName [-ZoneName] <String> [-Name] <String> [-HostAliasName] <String> [[-TimeToLive] <Object>] [-WhatIf] [-Confirm] <CommonParameters>
 
 Подробное описание функций модуля
 ---------------------------------
@@ -368,7 +368,7 @@ API Яндекс.DNS для доменов
 
 ##### Синтаксис
 	
-	Add-DnsServerResourceRecordCName [-ZoneName] <String> [-HostAliasName] <String> [-Name] <String> [[-TimeToLive] <Object>] [-WhatIf] [-Confirm] <CommonParameters>
+	Add-DnsServerResourceRecordCName [-ZoneName] <String> [-Name] <String> [-HostAliasName] <String> [[-TimeToLive] <Object>] [-WhatIf] [-Confirm] <CommonParameters>
 
 ##### Компонент
 
@@ -385,7 +385,7 @@ API Яндекс.DNS для доменов
         Принимать входные данные конвейера?true (ByPropertyName)
         Принимать подстановочные знаки?
         
-- `HostAliasName <String>`
+- `Name <String>`
         имя записи
         
         Требуется?                    true
@@ -394,8 +394,8 @@ API Яндекс.DNS для доменов
         Принимать входные данные конвейера?true (ByPropertyName)
         Принимать подстановочные знаки?
         
-- `Name <String>`
-        имя записи
+- `HostAliasName <String>`
+        FQDN записей, на которые будет ссылаться CName
         
         Требуется?                    true
         Позиция?                    3
@@ -442,7 +442,7 @@ API Яндекс.DNS для доменов
 
 1. Создаём CName www2 как псевдоним к www.csm.nov.ru.
 
-		Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www2' -Name 'www';
+		Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www2' -HostAliasName 'www';
 
 ##### Связанные ссылки
 

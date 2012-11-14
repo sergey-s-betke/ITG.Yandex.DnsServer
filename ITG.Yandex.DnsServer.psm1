@@ -245,7 +245,7 @@ function Add-DnsServerResourceRecordCName {
 		.Link
 			[MS PowerShell DnsServer - Add-DnsServerResourceRecordCName](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832246.aspx)
 		.Example
-			Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www2' -Name 'www';
+			Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www2' -HostAliasName 'www';
 			Создаём CName www2 как псевдоним к www.csm.nov.ru.
 	#>
 
@@ -274,18 +274,18 @@ function Add-DnsServerResourceRecordCName {
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
-		[Alias("SubDomain")]
-		$HostAliasName
+		[Alias("Content")]
+		$Name
 	,
-		# имя записи
+		# FQDN записей, на которые будет ссылаться CName
 		[Parameter(
 			Mandatory=$true
 			, ValueFromPipelineByPropertyName=$true
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
-		[Alias("Content")]
-		$Name
+		[Alias("SubDomain")]
+		$HostAliasName
 	,
 		# TTL записи
 		[Parameter(
@@ -302,11 +302,11 @@ function Add-DnsServerResourceRecordCName {
 	)
 
 	process {
-		if ( -not $Name.EndsWith( '.' ) ) { $Name = "$Name.$ZoneName."; };
-		Write-Verbose "Создаём CNAME запись $HostAliasName в зоне $ZoneName ($Name).";
+		if ( -not $HostAliasName.EndsWith( '.' ) ) { $HostAliasName = "$HostAliasName.$ZoneName."; };
+		Write-Verbose "Создаём CNAME запись $Name в зоне $ZoneName ($HostAliasName).";
 		$APIParams = @{
-			subdomain = $HostAliasName;
-			content = $Name;
+			subdomain = $Name;
+			content = $HostAliasName;
 		};
 		if ( $TimeToLive -ne $null ) {
 			if ( $TimeToLive -isnot [System.TimeSpan] ) {

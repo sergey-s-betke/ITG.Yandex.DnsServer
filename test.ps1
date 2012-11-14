@@ -39,8 +39,8 @@ Import-Module `
 #	-ZoneName 'csm.nov.ru' `
 #;
 
-#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www3' -Name 'mail.csm.nov.ru.';
-#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www4' -Name 'mail';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www3' -HostAliasName 'mail.csm.nov.ru.';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www4' -HostAliasName 'www3';
 
 #Remove-DnsServerResourceRecord `
 #	-ZoneName 'csm.nov.ru' `
