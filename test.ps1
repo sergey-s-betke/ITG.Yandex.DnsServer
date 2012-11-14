@@ -19,7 +19,7 @@ Import-Module `
 	) `
 	-Force `
 	-PassThru `
-#| Get-Readme -OutDefaultFile `
+| Get-Readme -OutDefaultFile `
 ;
 
 #Add-DnsServerResourceRecordA `
@@ -42,7 +42,9 @@ Import-Module `
 #Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www3' -Name 'mail.csm.nov.ru.';
 #Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -HostAliasName 'www4' -Name 'mail';
 
-Remove-DnsServerResourceRecord `
-	-ZoneName 'csm.nov.ru' `
-    -Name 'www2', 'www3', 'www4' `
-;
+#Remove-DnsServerResourceRecord `
+#	-ZoneName 'csm.nov.ru' `
+#    -Name 'www2', 'www3', 'www4' `
+#;
+
+# примеры использования DnsServer http://gallery.technet.microsoft.com/scriptcenter/DNS-Server-PowerShell-afc2142b
