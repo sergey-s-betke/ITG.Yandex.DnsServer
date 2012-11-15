@@ -113,6 +113,7 @@ function Get-DnsServerResourceRecord {
 			};
 			$res;
 		} `
+		| ? { $_.id -ne 0 } `
 		| ? { ( -not $Name.Count ) -or ( $Name -contains $_.HostName ) } `
 		| ? { ( -not $RRType.Count ) -or ( $RRType -contains $_.RecordType ) } `
 		| ? { ( -not $RecordData.Count ) -or ( $RecordData -contains $_.RecordData ) } `
