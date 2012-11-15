@@ -55,6 +55,12 @@ VERBOSE: Ответ API  <?xml version="1.0" encoding="utf-8"?>
 #| Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
 #| Out-GridView ;
 
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'CNAME' `
+#| Add-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RecordData 'gate.novgaro.ru.' -PassThru -WhatIf `
+#| Out-GridView;
+
+#Add-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'test' -RRType 'CNAME' -RecordData 'gate.novgaro.ru.' -WhatIf;
+
 #| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2';
 
 #Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www3' -HostAliasName 'mail.csm.nov.ru.';

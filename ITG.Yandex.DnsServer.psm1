@@ -93,6 +93,89 @@ function Get-DnsServerResourceRecord {
 	}
 }
 
+function Add-DnsServerResourceRecord {
+	<#
+		.Component
+			API Яндекс.DNS для доменов
+		.Synopsis
+			Метод (обёртка над Яндекс.API add_a_record) предназначен для 
+			создания новой записи на "припаркованном" на Яндексе домене 
+			на основе данных о записи из конвейера.
+		.Description
+			Метод (обёртка над Яндекс.API add_a_record) предназначен для 
+			создания новой записи на "припаркованном" на Яндексе домене 
+			на основе данных о записи из конвейера. 
+			Параметры в этом командлете не привязаны к конвейеру сознательно: привязка 
+			будет осуществлена в вызываемом в зависимости от типа записи командлета. 
+			Здесь же в параметрах следует видеть только явно заданные параметры. 
+			Интерфейс командлета максимально приближен к аналогичному командлету 
+			модуля DnsServer Windows Server 2012. 
+		.Link
+			[API Яндекс.DNS - add_a_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml)
+		.Example
+			Get-DnsServerResourceRecord -ZoneName 'csm.nov.local' -RRType 'A','CNAME','AAAA' | Add-YandexDnsServerResourceRecord -ZoneName 'csm.nov.ru';
+			"Копирование" всех записей типа A, AAAA, CNAME из локальной зоны DNS в публичную зону DNS, размещённую на серверах Яндекса.
+	#>
+
+	[CmdletBinding(
+		SupportsShouldProcess=$true
+		, ConfirmImpact='Medium'
+	)]
+	
+	param (
+		# имя домена, зарегистрированного на сервисах Яндекса
+		[Parameter(
+			Mandatory=$true
+		)]
+		[string]
+		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
+		$ZoneName
+	,
+		# имя записи
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias('SubDomain')]
+		[Alias('HostName')]
+		$Name
+	,
+		# тип записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[ValidateSet('MX', 'A', 'AAAA', 'CNAME', 'SRV', 'TXT', 'NS')]
+		[Alias('RecordType')]
+		$RRType
+	,
+		# содержание записи
+		[string]
+		[ValidateNotNullOrEmpty()]
+		$RecordData
+	,
+		# TTL записи
+#		[System.TimeSpan]
+		[Alias('TTL')]
+		$TimeToLive
+	,
+		# передавать ли описатель созданной записи в конвейер
+		[switch]
+		$PassThru
+	)
+
+	process {
+		$null = $PSBoundParameters.Remove('RRType');
+		if ( $_ ) {
+			$_ | & "Add-DnsServerResourceRecord$RRType" @PSBoundParameters;
+		} else {
+			& "Add-DnsServerResourceRecord$RRType" @PSBoundParameters;
+		};
+	}
+}
+
 function Add-DnsServerResourceRecordA {
 	<#
 		.Component
@@ -132,9 +215,9 @@ function Add-DnsServerResourceRecordA {
 		)]
 		[string]
 		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
-		[Alias("domain_name")]
-		[Alias("DomainName")]
-		[Alias("Domain")]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
 		$ZoneName
 	,
 		# имя записи
@@ -144,7 +227,7 @@ function Add-DnsServerResourceRecordA {
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
-		[Alias("SubDomain")]
+		[Alias('SubDomain')]
 		[Alias('HostName')]
 		$Name
 	,
@@ -155,7 +238,8 @@ function Add-DnsServerResourceRecordA {
 		)]
 		[System.Net.IPAddress[]]
 		[ValidateNotNullOrEmpty()]
-		[Alias("Content")]
+		[Alias('Content')]
+		[Alias('RecordData')]
 		$IPv4Address
 	,
 		# TTL записи
@@ -164,7 +248,7 @@ function Add-DnsServerResourceRecordA {
 			, ValueFromPipelineByPropertyName=$true
 		)]
 #		[System.TimeSpan]
-		[Alias("TTL")]
+		[Alias('TTL')]
 		$TimeToLive
 	,
 		# передавать ли описатель созданной записи в конвейер
@@ -186,15 +270,17 @@ function Add-DnsServerResourceRecordA {
 		}
 		$IPv4Address `
 		| % {
-			$APIParams.content = $_;
-			Invoke-API `
-				-method 'nsapi/add_a_record' `
-				-DomainName $ZoneName `
-				-Params ( $APIParams.Clone() ) `
-				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-				-FailureMsgFilter { $_.page.domains.error } `
-			;
+			if ( $PSCmdlet.ShouldProcess( "$Name A $_ (в зоне $ZoneName)", 'Создать' ) ) {
+				$APIParams.content = $_;
+				Invoke-API `
+					-method 'nsapi/add_a_record' `
+					-DomainName $ZoneName `
+					-Params ( $APIParams.Clone() ) `
+					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+					-FailureMsgFilter { $_.page.domains.error } `
+				;
+			};
 		};
 		if ( $PassThru ) { $input };
 	}
@@ -239,9 +325,9 @@ function Add-DnsServerResourceRecordAAAA {
 		)]
 		[string]
 		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
-		[Alias("domain_name")]
-		[Alias("DomainName")]
-		[Alias("Domain")]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
 		$ZoneName
 	,
 		# имя записи
@@ -251,7 +337,7 @@ function Add-DnsServerResourceRecordAAAA {
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
-		[Alias("SubDomain")]
+		[Alias('SubDomain')]
 		[Alias('HostName')]
 		$Name
 	,
@@ -262,7 +348,8 @@ function Add-DnsServerResourceRecordAAAA {
 		)]
 		[System.Net.IPAddress[]]
 		[ValidateNotNullOrEmpty()]
-		[Alias("Content")]
+		[Alias('Content')]
+		[Alias('RecordData')]
 		$IPv6Address
 	,
 		# TTL записи
@@ -271,7 +358,7 @@ function Add-DnsServerResourceRecordAAAA {
 			, ValueFromPipelineByPropertyName=$true
 		)]
 #		[System.TimeSpan]
-		[Alias("TTL")]
+		[Alias('TTL')]
 		$TimeToLive
 	,
 		# передавать ли описатель созданной записи в конвейер
@@ -294,14 +381,16 @@ function Add-DnsServerResourceRecordAAAA {
 		$IPv6Address `
 		| % {
 			$APIParams.content = $_;
-			Invoke-API `
-				-method 'nsapi/add_aaaa_record' `
-				-DomainName $ZoneName `
-				-Params ( $APIParams.Clone() ) `
-				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-				-FailureMsgFilter { $_.page.domains.error } `
-			;
+			if ( $PSCmdlet.ShouldProcess( "$Name AAAA $_ (в зоне $ZoneName)", 'Создать' ) ) {
+				Invoke-API `
+					-method 'nsapi/add_aaaa_record' `
+					-DomainName $ZoneName `
+					-Params ( $APIParams.Clone() ) `
+					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+					-FailureMsgFilter { $_.page.domains.error } `
+				;
+			};
 		};
 		if ( $PassThru ) { $input };
 	}
@@ -354,9 +443,9 @@ function Add-DnsServerResourceRecordCName {
 		)]
 		[string]
 		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
-		[Alias("domain_name")]
-		[Alias("DomainName")]
-		[Alias("Domain")]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
 		$ZoneName
 	,
 		# имя записи
@@ -366,7 +455,7 @@ function Add-DnsServerResourceRecordCName {
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
-		[Alias("Content")]
+		[Alias('SubDomain')]
 		[Alias('HostName')]
 		$Name
 	,
@@ -377,7 +466,8 @@ function Add-DnsServerResourceRecordCName {
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
-		[Alias("SubDomain")]
+		[Alias('Content')]
+		[Alias('RecordData')]
 		$HostAliasName
 	,
 		# TTL записи
@@ -386,7 +476,7 @@ function Add-DnsServerResourceRecordCName {
 			, ValueFromPipelineByPropertyName=$true
 		)]
 #		[System.TimeSpan]
-		[Alias("TTL")]
+		[Alias('TTL')]
 		$TimeToLive
 	,
 		# передавать ли описатель созданной записи в конвейер
@@ -407,14 +497,16 @@ function Add-DnsServerResourceRecordCName {
 			};
 			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
 		}
-		Invoke-API `
-			-method 'nsapi/add_cname_record' `
-			-DomainName $ZoneName `
-			-Params $APIParams `
-			-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-			-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-			-FailureMsgFilter { $_.page.domains.error } `
-		;
+		if ( $PSCmdlet.ShouldProcess( "$Name CNAME $HostAliasName (в зоне $ZoneName)", 'Создать' ) ) {
+			Invoke-API `
+				-method 'nsapi/add_cname_record' `
+				-DomainName $ZoneName `
+				-Params $APIParams `
+				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+				-FailureMsgFilter { $_.page.domains.error } `
+			;
+		};
 		if ( $PassThru ) { $input };
 	}
 }
@@ -456,9 +548,9 @@ function Remove-DnsServerResourceRecord {
 		)]
 		[string]
 		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
-		[Alias("domain_name")]
-		[Alias("DomainName")]
-		[Alias("Domain")]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
 		$ZoneName
 	,
 		# имя записи
@@ -468,8 +560,8 @@ function Remove-DnsServerResourceRecord {
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
-		[Alias("SubDomain")]
-		[Alias("HostName")]
+		[Alias('SubDomain')]
+		[Alias('HostName')]
 		$Name
 	,
 		# тип записи
@@ -479,7 +571,7 @@ function Remove-DnsServerResourceRecord {
 		)]
 		[string]
 		[ValidateSet('MX', 'A', 'AAAA', 'CNAME', 'SRV', 'TXT', 'NS')]
-		[Alias("RecordType")]
+		[Alias('RecordType')]
 		$RRType
 	,
 		# содержимое удаляемой записи для точного определения удаляемой записи
@@ -546,8 +638,9 @@ function Remove-DnsServerResourceRecord {
 
 Export-ModuleMember `
 	Get-DnsServerResourceRecord `
+	, Add-DnsServerResourceRecord `
+	, Remove-DnsServerResourceRecord `
 	, Add-DnsServerResourceRecordA `
 	, Add-DnsServerResourceRecordAAAA `
 	, Add-DnsServerResourceRecordCName `
-	, Remove-DnsServerResourceRecord `
 ;
