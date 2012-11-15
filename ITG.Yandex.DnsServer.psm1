@@ -222,14 +222,14 @@ function Add-DnsServerResourceRecordA {
 	,
 		# имя записи
 		[Parameter(
-			Mandatory=$true
+			Mandatory=$false
 			, ValueFromPipelineByPropertyName=$true
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
 		[Alias('SubDomain')]
 		[Alias('HostName')]
-		$Name
+		$Name = '@'
 	,
 		# IP адреса для создаваемой записи
 		[Parameter(
@@ -332,14 +332,14 @@ function Add-DnsServerResourceRecordAAAA {
 	,
 		# имя записи
 		[Parameter(
-			Mandatory=$true
+			Mandatory=$false
 			, ValueFromPipelineByPropertyName=$true
 		)]
 		[string]
 		[ValidateNotNullOrEmpty()]
 		[Alias('SubDomain')]
 		[Alias('HostName')]
-		$Name
+		$Name = '@'
 	,
 		# IP адреса для создаваемой записи
 		[Parameter(
@@ -511,6 +511,135 @@ function Add-DnsServerResourceRecordCName {
 	}
 }
 
+function Add-DnsServerResourceRecordMX {
+	<#
+		.Component
+			API Яндекс.DNS для доменов
+		.Synopsis
+			Метод (обёртка над Яндекс.API add_mx_record) предназначен для 
+			создания новой записи типа MX на "припаркованном" на Яндексе домене.
+		.Description
+			Метод (обёртка над Яндекс.API add_mx_record) предназначен для 
+			создания новой записи типа MX на "припаркованном" на Яндексе домене.
+			Интерфейс командлета максимально приближен к аналогичному командлету 
+			модуля DnsServer Windows Server 2012. 
+			В описании API на Яндексе закралась ошибка. API принимает и параметр priority. 
+			Синтаксис запроса: 
+				https://pddimp.yandex.ru/nsapi/add_mx_record.xml ? 
+					token =<токен пользователя>
+					 & domain =<имя домена>
+					 & [subdomain =<имя субдомена>]
+					 & [ttl =<время жизни записи>]
+					 & [priority =<приоритет>]
+					 & content =<содержимое записи>
+		.Link
+			[API Яндекс.DNS - add_mx_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_mx_record.xml)
+		.Link
+			[MS PowerShell DnsServer - Add-DnsServerResourceRecordMX](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832249.aspx)
+		.Example
+			Add-DnsServerResourceRecordMX -ZoneName 'csm.nov.ru' -MailExchange 'mx.yandex.ru.';
+			Создаём MX запись в домене csm.nov.ru.
+	#>
+
+	[CmdletBinding(
+		SupportsShouldProcess=$true
+		, ConfirmImpact="Medium"
+	)]
+	
+	param (
+		# имя домена, зарегистрированного на сервисах Яндекса
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
+		$ZoneName
+	,
+		# имя записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias('SubDomain')]
+		[Alias('HostName')]
+		$Name = '@'
+	,
+		# FQDN сервера, который будет принимать SMTP почту
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias('Content')]
+		[Alias('RecordData')]
+		$MailExchange
+	,
+		# Приоритет сервера
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[uint16]
+		[ValidateNotNullOrEmpty()]
+		[Alias('priority')]
+		$Preference
+	,
+		# TTL записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+#		[System.TimeSpan]
+		[Alias('TTL')]
+		$TimeToLive
+	,
+		# передавать ли описатель созданной записи в конвейер
+		[switch]
+		$PassThru
+	)
+
+	process {
+		if ( -not $MailExchange.EndsWith( '.' ) ) { $MailExchange = "$MailExchange.$ZoneName."; };
+		if ( $Name -eq '@' ) {
+			$MailDomain = $ZoneName;
+		} else {
+			$MailDomain = "$Name.$ZoneName";
+		};
+		Write-Verbose "Создаём MX запись для домена $MailDomain ($MailExchange).";
+		$APIParams = @{
+			subdomain = $Name;
+			content = $MailExchange;
+		};
+		if ( $TimeToLive -ne $null ) {
+			if ( $TimeToLive -isnot [System.TimeSpan] ) {
+				$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
+			};
+			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
+		}
+		if ( $Preference -ne $null ) {
+			$APIParams.Add( 'priority', $Preference );
+		}
+		if ( $PSCmdlet.ShouldProcess( "MX запись для домена $MailDomain ($MailExchange).", 'Создать' ) ) {
+			Invoke-API `
+				-method 'nsapi/add_mx_record' `
+				-DomainName $ZoneName `
+				-Params $APIParams `
+				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+				-FailureMsgFilter { $_.page.domains.error } `
+			;
+		};
+		if ( $PassThru ) { $input };
+	}
+}
+
 function Remove-DnsServerResourceRecord {
 	<#
 		.Component
@@ -643,4 +772,5 @@ Export-ModuleMember `
 	, Add-DnsServerResourceRecordA `
 	, Add-DnsServerResourceRecordAAAA `
 	, Add-DnsServerResourceRecordCName `
+	, Add-DnsServerResourceRecordMX `
 ;
