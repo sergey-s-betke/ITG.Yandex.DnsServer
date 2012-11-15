@@ -22,14 +22,21 @@ Import-Module `
 | Get-Readme -OutDefaultFile `
 ;
 
-Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'SOA' `
-| Out-GridView;
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'SOA' `
+#| Out-GridView;
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'hostmaster' `
 #| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
 #Add-DnsServerResourceRecordTxt -ZoneName 'csm.nov.ru' -Name 'hostmaster' -Text 'IT department of CSM of Velikiy Novgorod. tel: +7 911 6499080.';
 
 #Add-DnsServerResourceRecordSRV -ZoneName 'csm.nov.ru' -Name '_xmpp-server3._tcp' -Server 'xmpp' -Port 5269;
+
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name '_xmpp-server3._tcp' `
+#| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
+
+#Get-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru' -Name '_xmpp-server3._tcp' `
+#| Remove-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru' -PassThru `
+#| Out-GridView;
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
 #| ? { $_.id -ne 0 } `

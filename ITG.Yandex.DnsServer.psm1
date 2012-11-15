@@ -3,6 +3,175 @@
 , 'ITG.Utils' `
 | Import-Module;
 
+filter ConvertFrom-YandexDnsServerResourceRecord {
+	param (
+		# имя записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[ValidateNotNullOrEmpty()]
+		[Alias('subdomain')]
+		$HostName
+	,
+		# тип записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[ValidateSet('MX', 'A', 'AAAA', 'CNAME', 'SRV', 'TXT', 'NS', 'SOA')]
+		[Alias('type')]
+		$RecordType
+	,
+		# класс записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		$RecordClass = 'IN'
+	,
+		# содержание записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[Alias('#text')]
+		$RecordData
+	,
+		# содержание записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[ValidateScript( {
+			if ( $_ -isnot [System.TimeSpan] ) {
+				$_ = [System.TimeSpan]::FromSeconds( $_ );
+			};
+			$true;
+		} )]
+		[Alias('ttl')]
+		$TimeToLive
+	,
+		# время создания записи (в нашем случае мы его не узнаем)
+		[Parameter(
+			Mandatory=$false
+		)]
+		[System.DateTime]
+		$Timestamp
+	,
+		# id записи (только для Яндекса)
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[ValidateNotNullOrEmpty()]
+		$id
+	,
+		# приоритет записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[ValidateScript( {
+			if ( $_ -ne '' ) {
+				$_ = [uint16]$_;
+			};
+			$true;
+		} )]
+		$Priority
+	,
+		# вес записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[uint16]
+		$Weight
+	,
+		# порт (для SVR записей)
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[uint16]
+		$Port
+	,
+		# время между повторными попытками slave DNS-серверов получить записи зоны (в случае, если master сервер ничего не вернул)
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[ValidateScript( {
+			if ( $_ -isnot [System.TimeSpan] ) {
+				$_ = [System.TimeSpan]::FromSeconds( $_ );
+			};
+			$true;
+		} )]
+		[Alias('retry')]
+		$RetryDelay
+	,
+		# время, по истечении которого slave DNS-сервера считают записи зоны несуществующими (в случае если master сервер продолжает ничего не возвращать)
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[ValidateScript( {
+			if ( $_ -isnot [System.TimeSpan] ) {
+				$_ = [System.TimeSpan]::FromSeconds( $_ );
+			};
+			$true;
+		} )]
+		[Alias('expire')]
+		$ExpireLimit
+	,
+		# TTL для записей зоны, если для них явно не указано другое время жизни в кеше
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[ValidateScript( {
+			if ( $_ -isnot [System.TimeSpan] ) {
+				$_ = [System.TimeSpan]::FromSeconds( $_ );
+			};
+			$true;
+		} )]
+		[Alias('minttl')]
+		$MinimumTimeToLive
+	,
+		# e-mail адрес администратора домена, точнее - ссылка на RP запись, если таковая присутствует. Отображается в SOA-записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[Alias('adminmail')]
+		$ResponsiblePerson
+	,
+		# TTL для SOA записи зоны
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[ValidateScript( {
+			if ( $_ -isnot [System.TimeSpan] ) {
+				$_ = [System.TimeSpan]::FromSeconds( $_ );
+			};
+			$true;
+		} )]
+		[Alias('refresh')]
+		$DnsServerResourceRecordSoa
+	)
+	$PSBoundParameters `
+	| ConvertFrom-Dictionary `
+	| ConvertTo-PSObject -PassThru `
+	;
+}
+
 function Get-DnsServerResourceRecord {
 	<#
 		.Component
@@ -69,148 +238,6 @@ function Get-DnsServerResourceRecord {
 		$RecordData
 	)
 
-	begin { 
-		filter ConvertFrom-YandexDnsServerResourceRecord {
-			param (
-				# имя записи
-				[Parameter(
-					Mandatory=$true
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[String]
-				[ValidateNotNullOrEmpty()]
-				[Alias('subdomain')]
-				$HostName
-			,
-				# тип записи
-				[Parameter(
-					Mandatory=$true
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[String]
-				[ValidateSet('MX', 'A', 'AAAA', 'CNAME', 'SRV', 'TXT', 'NS', 'SOA')]
-				[Alias('type')]
-				$RecordType
-			,
-				# класс записи
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[String]
-				$RecordClass = 'IN'
-			,
-				# содержание записи
-				[Parameter(
-					Mandatory=$true
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[String]
-				[Alias('#text')]
-				$RecordData
-			,
-				# содержание записи
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[System.TimeSpan]
-				[ValidateScript( { $_=[System.TimeSpan]::FromSeconds($_) } )]
-				[Alias('ttl')]
-				$TimeToLive
-			,
-				# время создания записи (в нашем случае мы его не узнаем)
-				[Parameter(
-					Mandatory=$false
-				)]
-				[System.DateTime]
-				$Timestamp
-			,
-				# id записи (только для Яндекса)
-				[Parameter(
-					Mandatory=$true
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[String]
-				[ValidateNotNullOrEmpty()]
-				$id
-			,
-				# приоритет записи
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[uint16]
-				$Priority
-			,
-				# вес записи
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[uint16]
-				$Weight
-			,
-				# порт (для SVR записей)
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[uint16]
-				$Port
-			,
-				# время между повторными попытками slave DNS-серверов получить записи зоны (в случае, если master сервер ничего не вернул)
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[System.TimeSpan]
-				[ValidateScript( { $_=[System.TimeSpan]::FromSeconds($_) } )]
-				[Alias('retry')]
-				$RetryDelay
-			,
-				# время, по истечении которого slave DNS-сервера считают записи зоны несуществующими (в случае если master сервер продолжает ничего не возвращать)
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[System.TimeSpan]
-				[ValidateScript( { $_=[System.TimeSpan]::FromSeconds($_) } )]
-				[Alias('expire')]
-				$ExpireLimit
-			,
-				# TTL для записей зоны, если для них явно не указано другое время жизни в кеше
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[System.TimeSpan]
-				[ValidateScript( { $_=[System.TimeSpan]::FromSeconds($_) } )]
-				[Alias('minttl')]
-				$MinimumTimeToLive
-			,
-				# e-mail адрес администратора домена, точнее - ссылка на RP запись, если таковая присутствует. Отображается в SOA-записи
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[String]
-				[Alias('adminmail')]
-				$ResponsiblePerson
-			,
-				# TTL для SOA записи зоны
-				[Parameter(
-					Mandatory=$false
-					, ValueFromPipelineByPropertyName=$true
-				)]
-				[System.TimeSpan]
-				[ValidateScript( { $_=[System.TimeSpan]::FromSeconds($_) } )]
-				[Alias('refresh')]
-				$DnsServerResourceRecordSoa
-			)
-			return $PSBoundParameters;
-		}
-	}
 	process {
 		Invoke-API `
 			-method 'nsapi/get_domain_records' `
@@ -225,42 +252,6 @@ function Get-DnsServerResourceRecord {
 		| ? { ( -not $RRType.Count ) -or ( $RRType -contains $_.RecordType ) } `
 		| ? { ( -not $RecordData.Count ) -or ( $RecordData -contains $_.RecordData ) } `
 		;
-#		| % {
-#			$res = Select-Object -InputObject $_ -Property `
-#				@{ Name='HostName'; Expression={ [String]$_.subdomain } } `
-#				, @{ Name='RecordType'; Expression={ [String]$_.type } } `
-#				, @{ Name='RecordClass'; Expression={ 'IN' } } `
-#				, @{ Name='RecordData'; Expression={ [String]$_.'#text' } } `
-#				, @{ Name='TimeToLive'; Expression={ [System.TimeSpan]::FromSeconds( $_.ttl ) } } `
-#				, @{ Name='Timestamp'; Expression={ $null } } `
-#				, @{ Name='id'; Expression={ [String]$_.id } } `
-#			;
-#			if ( $_.Priority ) { 
-#				Add-Member `
-#					-InputObject $res `
-#					-MemberType NoteProperty `
-#					-Name Priority `
-#					-Value ( [uint16]$_.Priority ) `
-#				;
-#			};
-#			if ( $_.Weight ) {
-#				Add-Member `
-#					-InputObject $res `
-#					-MemberType NoteProperty `
-#					-Name Weight `
-#					-Value ( [uint16]$_.Weight ) `
-#				;
-#			};
-#			if ( $_.Port ) {
-#				Add-Member `
-#					-InputObject $res `
-#					-MemberType NoteProperty `
-#					-Name Port `
-#					-Value ( [uint16]$_.Port ) `
-#				;
-#			};
-#			$res;
-#		} `
 	}
 }
 
