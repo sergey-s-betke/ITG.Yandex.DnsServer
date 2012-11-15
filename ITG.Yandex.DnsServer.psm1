@@ -77,15 +77,42 @@ function Get-DnsServerResourceRecord {
 			-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
 			-FailureMsgFilter { $_.page.domains.error } `
 			-ResultFilter { $_.page.domains.domain.response.record } `
-		| Select-Object -Property `
-			@{ Name='HostName'; Expression={ [String]$_.subdomain } } `
-			, @{ Name='RecordType'; Expression={ [String]$_.type } } `
-			, @{ Name='RecordClass'; Expression={ 'IN' } } `
-			, @{ Name='RecordData'; Expression={ [String]$_.'#text' } } `
-			, @{ Name='TimeToLive'; Expression={ [System.TimeSpan]::FromSeconds( $_.ttl ) } } `
-			, @{ Name='Timestamp'; Expression={ $null } } `
-			, 'priority' `
-			, 'id' `
+		| % {
+			$res = Select-Object -InputObject $_ -Property `
+				@{ Name='HostName'; Expression={ [String]$_.subdomain } } `
+				, @{ Name='RecordType'; Expression={ [String]$_.type } } `
+				, @{ Name='RecordClass'; Expression={ 'IN' } } `
+				, @{ Name='RecordData'; Expression={ [String]$_.'#text' } } `
+				, @{ Name='TimeToLive'; Expression={ [System.TimeSpan]::FromSeconds( $_.ttl ) } } `
+				, @{ Name='Timestamp'; Expression={ $null } } `
+				, @{ Name='id'; Expression={ [String]$_.id } } `
+			;
+			if ( $_.Priority ) { 
+				Add-Member `
+					-InputObject $res `
+					-MemberType NoteProperty `
+					-Name Priority `
+					-Value ( [uint16]$_.Priority ) `
+				;
+			};
+			if ( $_.Weight ) {
+				Add-Member `
+					-InputObject $res `
+					-MemberType NoteProperty `
+					-Name Weight `
+					-Value ( [uint16]$_.Weight ) `
+				;
+			};
+			if ( $_.Port ) {
+				Add-Member `
+					-InputObject $res `
+					-MemberType NoteProperty `
+					-Name Port `
+					-Value ( [uint16]$_.Port ) `
+				;
+			};
+			$res;
+		} `
 		| ? { ( -not $Name.Count ) -or ( $Name -contains $_.HostName ) } `
 		| ? { ( -not $RRType.Count ) -or ( $RRType -contains $_.RecordType ) } `
 		| ? { ( -not $RecordData.Count ) -or ( $RecordData -contains $_.RecordData ) } `
@@ -588,7 +615,7 @@ function Add-DnsServerResourceRecordMX {
 		)]
 		[uint16]
 		[ValidateNotNullOrEmpty()]
-		[Alias('priority')]
+		[Alias('Priority')]
 		$Preference
 	,
 		# TTL записи
