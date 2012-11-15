@@ -787,6 +787,145 @@ function Add-DnsServerResourceRecordNS {
 	}
 }
 
+function Add-DnsServerResourceRecordSRV {
+	<#
+		.Component
+			API Яндекс.DNS для доменов
+		.Synopsis
+			Метод (обёртка над Яндекс.API add_srv_record) предназначен для 
+			создания новой SRV записи на "припаркованном" на Яндексе домене.
+		.Description
+			Метод (обёртка над Яндекс.API add_srv_record) предназначен для 
+			создания новой SRV записи на "припаркованном" на Яндексе домене. 
+			Интерфейс командлета максимально приближен к аналогичному командлету 
+			модуля DnsServer Windows Server 2012. 
+			To-Do: обнаружил ошибку в API: при создании SRV записи через API Яндекса 
+			возникает ещё одна "фантомная" запись с тем же содержанием, но в состоянии 
+			"добавляется". И так и висит. Удалить её нет возможности...
+		.Link
+			[API Яндекс.DNS - add_srv_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_srv_record.xml)
+		.Link
+			[MS PowerShell DnsServer - Add-DnsServerResourceRecordSRV](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832799.aspx)
+		.Example
+			Add-DnsServerResourceRecordSRV -ZoneName 'csm.nov.ru' -Name '_xmpp-server._tcp' -Server 'xmpp' -Port 5269 -Weight 0 -Priority 40;
+			Создаём SRV запись в домене csm.nov.ru.
+		.Example
+			Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'SRV' | ? { $_.HostName -like '*xmpp*' } | Add-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru';
+			Копируем SRV записи, описывающие XMPP (Jabber) сервис, с одного домена в другой.
+	#>
+
+	[CmdletBinding(
+		SupportsShouldProcess=$true
+		, ConfirmImpact="Medium"
+	)]
+	
+	param (
+		# имя домена, зарегистрированного на сервисах Яндекса
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
+		$ZoneName
+	,
+		# имя записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias('SubDomain')]
+		[Alias('HostName')]
+		$Name
+	,
+		# FQDN сервера, на котором расположен сервис, описываемый SRV записью
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias('target')]
+		[Alias('RecordData')]
+		$Server
+	,
+		# Порт сервера
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[uint16]
+		$Port
+	,
+		# Приоритет сервера
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[uint16]
+		[Alias('Priority')]
+		$Preference
+	,
+		# Вес сервера
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[uint16]
+		$Weight
+	,
+		# TTL записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+#		[System.TimeSpan]
+		[Alias('TTL')]
+		$TimeToLive
+	,
+		# передавать ли описатель созданной записи в конвейер
+		[switch]
+		$PassThru
+	)
+
+	process {
+		if ( -not $Server.EndsWith( '.' ) ) { $Server = "$Server.$ZoneName."; };
+		$SrvDomain = "$Name.$ZoneName";
+		Write-Verbose "Создаём SRV запись $Name.$ZoneName для домена $ZoneName ($Server).";
+		$APIParams = @{
+			subdomain = $Name;
+			target = $Server;
+			port = $Port;
+			weight = $Weight;
+		};
+		if ( $TimeToLive -ne $null ) {
+			if ( $TimeToLive -isnot [System.TimeSpan] ) {
+				$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
+			};
+			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
+		}
+		if ( $Preference -ne $null ) {
+			$APIParams.Add( 'priority', $Preference );
+		}
+		if ( $PSCmdlet.ShouldProcess( "SRV запись $Name.$ZoneName для домена $ZoneName ($Server)", 'Создать' ) ) {
+			Invoke-API `
+				-method 'nsapi/add_srv_record' `
+				-DomainName $ZoneName `
+				-Params $APIParams `
+				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+				-FailureMsgFilter { $_.page.domains.error } `
+			;
+		};
+		if ( $PassThru ) { $input };
+	}
+}
+
 function Remove-DnsServerResourceRecord {
 	<#
 		.Component
@@ -921,4 +1060,5 @@ Export-ModuleMember `
 	, Add-DnsServerResourceRecordCName `
 	, Add-DnsServerResourceRecordMX `
 	, Add-DnsServerResourceRecordNS `
+	, Add-DnsServerResourceRecordSRV `
 ;

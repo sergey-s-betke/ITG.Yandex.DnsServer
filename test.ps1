@@ -22,6 +22,14 @@ Import-Module `
 | Get-Readme -OutDefaultFile `
 ;
 
+# Add-DnsServerResourceRecordSRV -ZoneName 'csm.nov.ru' -Name '_xmpp-server2._tcp' -Server 'xmpp' -Port 5269 -Weight 2;
+
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
+#| ? { $_.id -ne 0 } `
+#| ? { $_.HostName -like '*xmpp*' } `
+#| Add-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru' -PassThru `
+#| Out-GridView;
+
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A','CNAME','NS' `
 #| Out-GridView;
 
