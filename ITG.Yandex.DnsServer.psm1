@@ -927,6 +927,116 @@ function Add-DnsServerResourceRecordSRV {
 	}
 }
 
+function Add-DnsServerResourceRecordTxt {
+	<#
+		.Component
+			API Яндекс.DNS для доменов
+		.Synopsis
+			Метод (обёртка над Яндекс.API add_txt_record) предназначен для 
+			создания новой записи типа TXT на "припаркованном" на Яндексе домене.
+		.Description
+			Метод (обёртка над Яндекс.API add_txt_record) предназначен для 
+			создания новой записи типа TXT на "припаркованном" на Яндексе домене.
+			Интерфейс командлета максимально приближен к аналогичному командлету 
+			модуля DnsServer Windows Server 2012. 
+		.Link
+			[API Яндекс.DNS - add_txt_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_txt_record.xml)
+		.Link
+			[MS PowerShell DnsServer - Add-DnsServerResourceRecordTxt](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832800.aspx)
+		.Example
+			Add-DnsServerResourceRecordTxt -ZoneName 'csm.nov.ru' -Name 'hostmaster' -Text 'IT department of CSM of Velikiy Novgorod. Sergey S. Betke.';
+	#>
+
+	[CmdletBinding(
+		SupportsShouldProcess=$true
+		, ConfirmImpact="Medium"
+	)]
+	
+	param (
+		# имя домена, зарегистрированного на сервисах Яндекса
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
+		$ZoneName
+	,
+		# Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneName).
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias('SubDomain')]
+		[Alias('HostName')]
+		$Name = '@'
+	,
+		# Содержание TXT записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string[]]
+		[ValidateNotNullOrEmpty()]
+		[Alias('Content')]
+		[Alias('RecordData')]
+		[Alias('Text')]
+		$DescriptiveText
+	,
+		# TTL записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+#		[System.TimeSpan]
+		[Alias('TTL')]
+		$TimeToLive
+	,
+		# передавать ли описатель созданной записи в конвейер
+		[switch]
+		$PassThru
+	)
+
+	process {
+		if ( $Name -eq '@' ) {
+			$FQDN = $ZoneName;
+		} else {
+			$FQDN = "$Name.$ZoneName";
+		};
+		$DescriptiveText `
+		| % {
+			$Txt = $_;
+			Write-Verbose "Создаём TXT запись $FQDN для домена $ZoneName ($Txt).";
+			$APIParams = @{
+				subdomain = $Name;
+				content = $Txt;
+			};
+			if ( $TimeToLive -ne $null ) {
+				if ( $TimeToLive -isnot [System.TimeSpan] ) {
+					$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
+				};
+				$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
+			}
+			if ( $PSCmdlet.ShouldProcess( "TXT запись $FQDN для домена $ZoneName", 'Создать' ) ) {
+				Invoke-API `
+					-method 'nsapi/add_txt_record' `
+					-DomainName $ZoneName `
+					-Params $APIParams `
+					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+					-FailureMsgFilter { $_.page.domains.error } `
+				;
+			};
+		};
+		if ( $PassThru ) { $input };
+	}
+}
+
 function Remove-DnsServerResourceRecord {
 	<#
 		.Component
@@ -1062,4 +1172,5 @@ Export-ModuleMember `
 	, Add-DnsServerResourceRecordMX `
 	, Add-DnsServerResourceRecordNS `
 	, Add-DnsServerResourceRecordSRV `
+	, Add-DnsServerResourceRecordTxt `
 ;
