@@ -145,6 +145,7 @@ function Add-DnsServerResourceRecordA {
 		[string]
 		[ValidateNotNullOrEmpty()]
 		[Alias("SubDomain")]
+		[Alias('HostName')]
 		$Name
 	,
 		# IP адреса для создаваемой записи
@@ -251,6 +252,7 @@ function Add-DnsServerResourceRecordAAAA {
 		[string]
 		[ValidateNotNullOrEmpty()]
 		[Alias("SubDomain")]
+		[Alias('HostName')]
 		$Name
 	,
 		# IP адреса для создаваемой записи
@@ -365,6 +367,7 @@ function Add-DnsServerResourceRecordCName {
 		[string]
 		[ValidateNotNullOrEmpty()]
 		[Alias("Content")]
+		[Alias('HostName')]
 		$Name
 	,
 		# FQDN записей, на которые будет ссылаться CName
