@@ -34,9 +34,9 @@ function Get-DnsServerResourceRecord {
 		)]
 		[string]
 		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
-		[Alias("domain_name")]
-		[Alias("DomainName")]
-		[Alias("Domain")]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
 		$ZoneName
 	,
 		# имя записи
@@ -46,7 +46,8 @@ function Get-DnsServerResourceRecord {
 		)]
 		[String[]]
 		[ValidateNotNullOrEmpty()]
-		[Alias("SubDomain")]
+		[Alias('SubDomain')]
+		[Alias('HostName')]
 		$Name
 	,
 		# тип записи
@@ -56,7 +57,16 @@ function Get-DnsServerResourceRecord {
 		)]
 		[String[]]
 		[ValidateSet('MX', 'A', 'AAAA', 'CNAME', 'SRV', 'TXT', 'NS')]
+		[Alias('RecordType')]
 		$RRType
+	,
+		# содержимое удаляемой записи для точного определения удаляемой записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string[]]
+		$RecordData
 	)
 
 	process {
@@ -78,6 +88,7 @@ function Get-DnsServerResourceRecord {
 			, 'id' `
 		| ? { ( -not $Name.Count ) -or ( $Name -contains $_.HostName ) } `
 		| ? { ( -not $RRType.Count ) -or ( $RRType -contains $_.RecordType ) } `
+		| ? { ( -not $RecordData.Count ) -or ( $RecordData -contains $_.RecordData ) } `
 		;
 	}
 }
@@ -432,7 +443,7 @@ function Remove-DnsServerResourceRecord {
 
 	[CmdletBinding(
 		SupportsShouldProcess=$true
-		, ConfirmImpact='High'
+		, ConfirmImpact='Medium'
 	)]
 	
 	param (

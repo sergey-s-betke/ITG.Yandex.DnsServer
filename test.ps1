@@ -18,9 +18,9 @@ Import-Module `
 		-ChildPath 'ITG.Yandex.DnsServer' `
 	) `
 	-Force `
-#	-PassThru `
-#| Get-Readme -OutDefaultFile `
-#;
+	-PassThru `
+| Get-Readme -OutDefaultFile `
+;
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A','CNAME','NS' `
 #| Out-GridView;
@@ -45,10 +45,15 @@ VERBOSE: Ответ API  <?xml version="1.0" encoding="utf-8"?>
 </page>
 #>
 
-Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2','www3' `
-| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A' -PassThru -WhatIf `
-| Out-GridView;
-;
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2','www3' `
+#| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -PassThru `
+#| Out-GridView;
+
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
+#| ? { $_.RecordType -ne 'SOA' } `
+#| Select-Object -Property '*' -ExcludeProperty id `
+#| Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
+#| Out-GridView ;
 
 #| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2';
 
