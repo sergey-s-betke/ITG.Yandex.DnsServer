@@ -166,10 +166,10 @@ function Add-DnsServerResourceRecordA {
 #		[System.TimeSpan]
 		[Alias("TTL")]
 		$TimeToLive
-#	,
-#		# передавать ли описатель созданной записи в конвейер
-#		[switch]
-#		$PassThru
+	,
+		# передавать ли описатель созданной записи в конвейер
+		[switch]
+		$PassThru
 	)
 
 	process {
@@ -196,7 +196,7 @@ function Add-DnsServerResourceRecordA {
 				-FailureMsgFilter { $_.page.domains.error } `
 			;
 		};
-#		if ( $PassThru ) { $input };
+		if ( $PassThru ) { $input };
 	}
 }
 
@@ -273,10 +273,10 @@ function Add-DnsServerResourceRecordAAAA {
 #		[System.TimeSpan]
 		[Alias("TTL")]
 		$TimeToLive
-#	,
-#		# передавать ли описатель созданной записи в конвейер
-#		[switch]
-#		$PassThru
+	,
+		# передавать ли описатель созданной записи в конвейер
+		[switch]
+		$PassThru
 	)
 
 	process {
@@ -303,7 +303,7 @@ function Add-DnsServerResourceRecordAAAA {
 				-FailureMsgFilter { $_.page.domains.error } `
 			;
 		};
-#		if ( $PassThru ) { $input };
+		if ( $PassThru ) { $input };
 	}
 }
 
@@ -388,10 +388,10 @@ function Add-DnsServerResourceRecordCName {
 #		[System.TimeSpan]
 		[Alias("TTL")]
 		$TimeToLive
-#	,
-#		# передавать ли описатель созданной записи в конвейер
-#		[switch]
-#		$PassThru
+	,
+		# передавать ли описатель созданной записи в конвейер
+		[switch]
+		$PassThru
 	)
 
 	process {
@@ -415,7 +415,7 @@ function Add-DnsServerResourceRecordCName {
 			-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
 			-FailureMsgFilter { $_.page.domains.error } `
 		;
-#		if ( $PassThru ) { $input };
+		if ( $PassThru ) { $input };
 	}
 }
 
