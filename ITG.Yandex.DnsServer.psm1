@@ -626,7 +626,7 @@ function Add-DnsServerResourceRecordMX {
 		if ( $Preference -ne $null ) {
 			$APIParams.Add( 'priority', $Preference );
 		}
-		if ( $PSCmdlet.ShouldProcess( "MX запись для домена $MailDomain ($MailExchange).", 'Создать' ) ) {
+		if ( $PSCmdlet.ShouldProcess( "MX запись для домена $MailDomain ($MailExchange)", 'Создать' ) ) {
 			Invoke-API `
 				-method 'nsapi/add_mx_record' `
 				-DomainName $ZoneName `
@@ -635,6 +635,126 @@ function Add-DnsServerResourceRecordMX {
 				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
 				-FailureMsgFilter { $_.page.domains.error } `
 			;
+		};
+		if ( $PassThru ) { $input };
+	}
+}
+
+function Add-DnsServerResourceRecordNS {
+	<#
+		.Component
+			API Яндекс.DNS для доменов
+		.Synopsis
+			Метод (обёртка над Яндекс.API add_ns_record) предназначен для 
+			создания новой записи типа NS на "припаркованном" на Яндексе домене.
+		.Description
+			Метод (обёртка над Яндекс.API add_ns_record) предназначен для 
+			создания новой записи типа NS на "припаркованном" на Яндексе домене.
+			Интерфейс командлета максимально приближен к аналогичному командлету 
+			модуля DnsServer Windows Server 2012. 
+			Синтаксис запроса: 
+				https://pddimp.yandex.ru/nsapi/add_mx_record.xml ? 
+					token =<токен пользователя>
+					 & domain =<имя домена>
+					 & [subdomain =<имя субдомена>]
+					 & [ttl =<время жизни записи>]
+					 & content =<содержимое записи>
+		.Link
+			[API Яндекс.DNS - add_ns_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_ns_record.xml)
+		.Link
+			[MS PowerShell DnsServer - Add-DnsServerResourceRecordNS](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832790.aspx)
+		.Example
+			Add-DnsServerResourceRecordNS -ZoneName 'csm.nov.ru' -Name 'support' -NameServer 'ns.csm.nov.ru.';
+			Создаём поддомен support в домене csm.nov.ru и указываем, что зона для этого поддомена поддерживается сервером ns.csm.nov.ru.
+	#>
+
+	[CmdletBinding(
+		SupportsShouldProcess=$true
+		, ConfirmImpact="Medium"
+	)]
+	
+	param (
+		# имя домена, зарегистрированного на сервисах Яндекса
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
+		[Alias('domain_name')]
+		[Alias('DomainName')]
+		[Alias('Domain')]
+		$ZoneName
+	,
+		# Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneName).
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		[Alias('SubDomain')]
+		[Alias('HostName')]
+		$Name = '@'
+	,
+		# FQDN адрес DNS сервера, на котором размещена зона для создаваемого поддомена. 
+		# To-Do: Сейчас проверка значения данного параметра не выполняется, в дальнейшем
+		# необходимо ввести проверку параметра
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string[]]
+		[ValidateNotNullOrEmpty()]
+		[Alias('Content')]
+		[Alias('RecordData')]
+		$NameServer
+	,
+		# TTL записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+#		[System.TimeSpan]
+		[Alias('TTL')]
+		$TimeToLive
+	,
+		# передавать ли описатель созданной записи в конвейер
+		[switch]
+		$PassThru
+	)
+
+	process {
+		if ( $Name -eq '@' ) {
+			$SubDomain = $ZoneName;
+		} else {
+			$SubDomain = "$Name.$ZoneName";
+		};
+		$NameServer `
+		| % {
+			$NS = $_;
+			if ( -not $NS.EndsWith( '.' ) ) { $NS = "$NS.$ZoneName."; };
+			Write-Verbose "Создаём NS запись для домена $SubDomain ($NS).";
+			$APIParams = @{
+				subdomain = $Name;
+				content = $NS;
+			};
+			if ( $TimeToLive -ne $null ) {
+				if ( $TimeToLive -isnot [System.TimeSpan] ) {
+					$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
+				};
+				$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
+			}
+			if ( $PSCmdlet.ShouldProcess( "NS запись для домена $SubDomain ($NS)", 'Создать' ) ) {
+				Invoke-API `
+					-method 'nsapi/add_ns_record' `
+					-DomainName $ZoneName `
+					-Params $APIParams `
+					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+					-FailureMsgFilter { $_.page.domains.error } `
+				;
+			};
 		};
 		if ( $PassThru ) { $input };
 	}
@@ -773,4 +893,5 @@ Export-ModuleMember `
 	, Add-DnsServerResourceRecordAAAA `
 	, Add-DnsServerResourceRecordCName `
 	, Add-DnsServerResourceRecordMX `
+	, Add-DnsServerResourceRecordNS `
 ;

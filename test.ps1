@@ -63,6 +63,11 @@ VERBOSE: Ответ API  <?xml version="1.0" encoding="utf-8"?>
 
 #Add-DnsServerResourceRecordMX -ZoneName 'csm.nov.ru' -MailExchange 'gate.novgaro.ru.' -Preference 40;
 
+#Add-DnsServerResourceRecordNS -ZoneName 'csm.nov.ru' -Name 'support' -NameServer 'ns1.csm.nov.ru.', 'ns2';
+
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'NS' -Name 'support' `
+#| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
+
 #| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2';
 
 #Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www3' -HostAliasName 'mail.csm.nov.ru.';
