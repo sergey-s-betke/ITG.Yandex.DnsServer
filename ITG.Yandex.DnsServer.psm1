@@ -166,10 +166,8 @@ filter ConvertFrom-YandexDnsServerResourceRecord {
 		[Alias('refresh')]
 		$DnsServerResourceRecordSoa
 	)
-	$PSBoundParameters `
-	| ConvertFrom-Dictionary `
-	| ConvertTo-PSObject -PassThru `
-	;
+	
+	New-Object PSObject -Property $PSBoundParameters;
 }
 
 function Get-DnsServerResourceRecord {
