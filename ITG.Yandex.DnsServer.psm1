@@ -328,11 +328,7 @@ function Add-DnsServerResourceRecord {
 
 	process {
 		$null = $PSBoundParameters.Remove('RRType');
-		if ( $_ ) {
-			$_ | & "Add-DnsServerResourceRecord$RRType" @PSBoundParameters;
-		} else {
-			& "Add-DnsServerResourceRecord$RRType" @PSBoundParameters;
-		};
+		$_ | & "Add-DnsServerResourceRecord$RRType" @PSBoundParameters;
 	}
 }
 
