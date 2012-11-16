@@ -25,11 +25,12 @@ Import-Module `
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'SOA' `
 #| Out-GridView;
 
-#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'hostmaster' `
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'test' `
 #| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
 #Add-DnsServerResourceRecordTxt -ZoneName 'csm.nov.ru' -Name 'hostmaster' -Text 'IT department of CSM of Velikiy Novgorod. tel: +7 911 6499080.';
 
-#Add-DnsServerResourceRecordSRV -ZoneName 'csm.nov.ru' -Name '_xmpp-server3._tcp' -Server 'xmpp' -Port 5269;
+#Add-DnsServerResourceRecordTxt -ZoneName 'csm.nov.ru' -Name 'test' -Text 'IT department', 'CSM of Velikiy Novgorod', 'tel: +7 911 6499080.';
+#Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'test';
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name '_xmpp-server3._tcp' `
 #| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
@@ -39,20 +40,21 @@ Import-Module `
 #| Out-GridView;
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
-#| ? { $_.id -ne 0 } `
-#| ? { $_.HostName -like '*xmpp*' } `
+#| ? { $_.HostName -like '*master' } `
 #| Add-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru' -PassThru `
 #| Out-GridView;
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A','CNAME','NS' `
 #| Out-GridView;
 
-#Add-DnsServerResourceRecordA `
-#	-ZoneName 'csm.nov.ru' `
-#	-Name 'www2' `
-#	-IPv4Address '172.31.0.9' `
-#;
-#
+#Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'www4' -IPv4Address '172.31.0.9';
+#Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'www5' -IPv4Address '172.31.0.9', '172.31.0.10';
+
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
+#| ? { $_.HostName -like 'www*' } `
+#| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -PassThru `
+#| Out-GridView;
+
 #Add-DnsServerResourceRecordAAAA `
 #	-ZoneName 'csm.nov.ru' `
 #	-Name 'www3' `
@@ -99,5 +101,24 @@ VERBOSE: Ответ API  <?xml version="1.0" encoding="utf-8"?>
 #	-ZoneName 'csm.nov.ru' `
 #    -Name 'www2' `
 #;
+
+
+
+#Add-DnsServerResourceRecordSRV -ZoneName 'csm.nov.ru' -Name 'test' -Server 'xmpp' -Port 5269;
+#Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'test5' -IPv4Address '172.31.0.9', '172.31.0.10';
+#Add-DnsServerResourceRecordAAAA `
+#	-ZoneName 'csm.nov.ru' `
+#	-Name 'test3' `
+#	-IPv6Address '::1' `
+#;
+#Add-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'test' -RRType 'CNAME' -RecordData 'gate';
+#Add-DnsServerResourceRecordMX -ZoneName 'csm.nov.ru' -MailExchange 'mailserver' -Preference 40 -WhatIf;
+#Add-DnsServerResourceRecordNS -ZoneName 'csm.nov.ru' -Name 'test' -NameServer 'ns1.csm.nov.ru.', 'ns2';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'test2' -HostAliasName 'www3';
+#
+#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
+#| ? { $_.HostName -like 'test*' } `
+#| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -PassThru `
+#| Out-GridView ;
 
 # примеры использования DnsServer http://gallery.technet.microsoft.com/scriptcenter/DNS-Server-PowerShell-afc2142b

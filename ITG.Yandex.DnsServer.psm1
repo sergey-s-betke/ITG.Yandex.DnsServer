@@ -167,6 +167,9 @@ filter ConvertFrom-YandexDnsServerResourceRecord {
 		$DnsServerResourceRecordSoa
 	)
 	
+	if ( -not $Priority ) {
+		$null = $PSBoundParameters.Remove( 'Priority' );
+	};
 	New-Object PSObject -Property $PSBoundParameters;
 }
 
@@ -197,11 +200,9 @@ function Get-DnsServerResourceRecord {
 		# имя домена, зарегистрированного на сервисах Яндекса
 		[Parameter(
 			Mandatory=$true
-			, ValueFromPipelineByPropertyName=$true
 		)]
 		[string]
 		[ValidateScript( { $_ -match "^$($reDomain)$" } )]
-		[Alias('domain_name')]
 		[Alias('DomainName')]
 		[Alias('Domain')]
 		$ZoneName
@@ -236,20 +237,26 @@ function Get-DnsServerResourceRecord {
 		$RecordData
 	)
 
+	begin {
+		$AllRecords = (
+			Invoke-API `
+				-method 'nsapi/get_domain_records' `
+				-DomainName $ZoneName `
+				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+				-FailureMsgFilter { $_.page.domains.error } `
+				-ResultFilter { $_.page.domains.domain.response.record } `
+			| ConvertFrom-YandexDnsServerResourceRecord `
+			| ? { $_.id -ne 0 } `
+		);
+	}
 	process {
-		Invoke-API `
-			-method 'nsapi/get_domain_records' `
-			-DomainName $ZoneName `
-			-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-			-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-			-FailureMsgFilter { $_.page.domains.error } `
-			-ResultFilter { $_.page.domains.domain.response.record } `
-		| ConvertFrom-YandexDnsServerResourceRecord `
-		| ? { $_.id -ne 0 } `
-		| ? { ( -not $Name.Count ) -or ( $Name -contains $_.HostName ) } `
-		| ? { ( -not $RRType.Count ) -or ( $RRType -contains $_.RecordType ) } `
-		| ? { ( -not $RecordData.Count ) -or ( $RecordData -contains $_.RecordData ) } `
-		;
+		$AllRecords `
+		| ? {
+			( ( -not $PSBoundParameters.ContainsKey('Name') ) -or ( $Name -contains $_.HostName ) ) `
+			-and ( ( -not $PSBoundParameters.ContainsKey('RRType') ) -or ( $RRType -contains $_.RecordType ) ) `
+			-and ( ( -not $PSBoundParameters.ContainsKey('RecordData') ) -or ( $RecordData -contains $_.RecordData ) ) `
+		};
 	}
 }
 
@@ -328,7 +335,155 @@ function Add-DnsServerResourceRecord {
 
 	process {
 		$null = $PSBoundParameters.Remove('RRType');
-		$_ | & "Add-DnsServerResourceRecord$RRType" @PSBoundParameters;
+		if ( $_ ) {
+			$_ | & "Add-DnsServerResourceRecord$RRType" @PSBoundParameters;
+		} else {
+			& "Add-DnsServerResourceRecord$RRType" @PSBoundParameters;
+		};
+	}
+}
+function Invoke-APIDnsServerResourceRecord {
+	<#
+		.Component
+			API Яндекс.DNS для доменов
+		.Synopsis
+			Вспомогательная функция для вызова API Add-DnsServerResourceRecordXXXX, не экспортируется.
+	#>
+
+	[CmdletBinding(
+		SupportsShouldProcess=$true
+		, ConfirmImpact="Medium"
+	)]
+	
+	param (
+		# имя домена, зарегистрированного на сервисах Яндекса
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[Alias('ZoneName')]
+		$domain
+	,
+		# тип записи
+		[Parameter(
+			Mandatory=$true
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[ValidateSet('MX', 'A', 'AAAA', 'CNAME', 'SRV', 'TXT', 'NS')]
+		[Alias('RecordType')]
+		$RRType
+	,
+	
+		# имя записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[Alias('Name')]
+		$subdomain = '@'
+	,
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+			, ParameterSetName='content'
+		)]
+		[String[]]
+		[Alias('IPv4Address')]
+		[Alias('IPv6Address')]
+		[Alias('HostAliasName')]
+		[Alias('MailExchange')]
+		[Alias('NameServer')]
+		[Alias('DescriptiveText')]
+		$content
+	,
+		# TTL записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+#		[System.TimeSpan]
+		[ValidateScript( {
+			if ( $_ -is [System.TimeSpan] ) {
+				$_ = $_.TotalSeconds;
+			};
+			$true;
+		} )]
+		[Alias('TimeToLive')]
+		$ttl
+	,
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+			, ParameterSetName='target'
+		)]
+		[String]
+		[Alias('Server')]
+		$target
+	,
+		# Приоритет записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[String]
+		[ValidateNotNullOrEmpty()]
+		[Alias('Preference')]
+		$priority
+	,
+		# Порт сервера
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		[ValidateNotNullOrEmpty()]
+		$port
+	,
+		# Вес записи
+		[Parameter(
+			Mandatory=$false
+			, ValueFromPipelineByPropertyName=$true
+		)]
+		[string]
+		$weight
+	,
+		# параметр будет игнорирован. Введён исключительно для облегчения использования данной вспомогательной функции
+		[switch]
+		$PassThru
+	,
+		# параметр Content содержит FQDN, и в том случае, если заканчивается не на '.', необходимо "дописать" domain.
+		[switch]
+		$ContentIsFQDN
+	)
+
+	process {
+		$null = $PSBoundParameters.Remove( 'RRType' );
+		$null = $PSBoundParameters.Remove( 'ContentIsFQDN' );
+		Write-Verbose "Создаём $RRType запись $subdomain в зоне $domain ($content).";
+		$ContentParam = $PsCmdlet.ParameterSetName;
+		$PSBoundParameters.$ContentParam `
+		| % {
+			$PSBoundParameters.$ContentParam = & {
+				if ( $ContentIsFQDN -and -not $_.EndsWith( '.' ) ) {
+					"$_.$domain.";
+				} else {
+					$_;
+				}
+			};
+			if ( $PSCmdlet.ShouldProcess( "$RRType запись $subdomain (в зоне $domain, $_)", 'Создать' ) ) {
+				Invoke-API `
+					-method "nsapi/add_$( $RRType.ToLower() )_record" `
+					-DomainName $domain `
+					-Params $PSBoundParameters `
+					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
+					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
+					-FailureMsgFilter { $_.page.domains.error } `
+				;
+			};
+		};
 	}
 }
 
@@ -413,31 +568,7 @@ function Add-DnsServerResourceRecordA {
 	)
 
 	process {
-		Write-Verbose "Создаём A запись $Name в зоне $ZoneName.";
-		$APIParams = @{
-			subdomain = $Name;
-			content = '';
-		};
-		if ( $TimeToLive -ne $null ) {
-			if ( $TimeToLive -isnot [System.TimeSpan] ) {
-				$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
-			};
-			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
-		}
-		$IPv4Address `
-		| % {
-			if ( $PSCmdlet.ShouldProcess( "$Name A $_ (в зоне $ZoneName)", 'Создать' ) ) {
-				$APIParams.content = $_;
-				Invoke-API `
-					-method 'nsapi/add_a_record' `
-					-DomainName $ZoneName `
-					-Params ( $APIParams.Clone() ) `
-					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-					-FailureMsgFilter { $_.page.domains.error } `
-				;
-			};
-		};
+		Invoke-APIDnsServerResourceRecord @PSBoundParameters -RRType 'A';
 		if ( $PassThru ) { $input };
 	}
 }
@@ -523,31 +654,7 @@ function Add-DnsServerResourceRecordAAAA {
 	)
 
 	process {
-		Write-Verbose "Создаём AAAA запись $Name в зоне $ZoneName.";
-		$APIParams = @{
-			subdomain = $Name;
-			content = '';
-		};
-		if ( $TimeToLive -ne $null ) {
-			if ( $TimeToLive -isnot [System.TimeSpan] ) {
-				$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
-			};
-			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
-		}
-		$IPv6Address `
-		| % {
-			$APIParams.content = $_;
-			if ( $PSCmdlet.ShouldProcess( "$Name AAAA $_ (в зоне $ZoneName)", 'Создать' ) ) {
-				Invoke-API `
-					-method 'nsapi/add_aaaa_record' `
-					-DomainName $ZoneName `
-					-Params ( $APIParams.Clone() ) `
-					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-					-FailureMsgFilter { $_.page.domains.error } `
-				;
-			};
-		};
+		Invoke-APIDnsServerResourceRecord @PSBoundParameters -RRType 'AAAA';
 		if ( $PassThru ) { $input };
 	}
 }
@@ -641,28 +748,7 @@ function Add-DnsServerResourceRecordCName {
 	)
 
 	process {
-		if ( -not $HostAliasName.EndsWith( '.' ) ) { $HostAliasName = "$HostAliasName.$ZoneName."; };
-		Write-Verbose "Создаём CNAME запись $Name в зоне $ZoneName ($HostAliasName).";
-		$APIParams = @{
-			subdomain = $Name;
-			content = $HostAliasName;
-		};
-		if ( $TimeToLive -ne $null ) {
-			if ( $TimeToLive -isnot [System.TimeSpan] ) {
-				$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
-			};
-			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
-		}
-		if ( $PSCmdlet.ShouldProcess( "$Name CNAME $HostAliasName (в зоне $ZoneName)", 'Создать' ) ) {
-			Invoke-API `
-				-method 'nsapi/add_cname_record' `
-				-DomainName $ZoneName `
-				-Params $APIParams `
-				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-				-FailureMsgFilter { $_.page.domains.error } `
-			;
-		};
+		Invoke-APIDnsServerResourceRecord @PSBoundParameters -RRType 'CNAME' -ContentIsFQDN;
 		if ( $PassThru ) { $input };
 	}
 }
@@ -762,36 +848,7 @@ function Add-DnsServerResourceRecordMX {
 	)
 
 	process {
-		if ( -not $MailExchange.EndsWith( '.' ) ) { $MailExchange = "$MailExchange.$ZoneName."; };
-		if ( $Name -eq '@' ) {
-			$MailDomain = $ZoneName;
-		} else {
-			$MailDomain = "$Name.$ZoneName";
-		};
-		Write-Verbose "Создаём MX запись для домена $MailDomain ($MailExchange).";
-		$APIParams = @{
-			subdomain = $Name;
-			content = $MailExchange;
-		};
-		if ( $TimeToLive -ne $null ) {
-			if ( $TimeToLive -isnot [System.TimeSpan] ) {
-				$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
-			};
-			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
-		}
-		if ( $Preference -ne $null ) {
-			$APIParams.Add( 'priority', $Preference );
-		}
-		if ( $PSCmdlet.ShouldProcess( "MX запись для домена $MailDomain ($MailExchange)", 'Создать' ) ) {
-			Invoke-API `
-				-method 'nsapi/add_mx_record' `
-				-DomainName $ZoneName `
-				-Params $APIParams `
-				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-				-FailureMsgFilter { $_.page.domains.error } `
-			;
-		};
+		Invoke-APIDnsServerResourceRecord @PSBoundParameters -RRType 'MX' -ContentIsFQDN;
 		if ( $PassThru ) { $input };
 	}
 }
@@ -881,37 +938,7 @@ function Add-DnsServerResourceRecordNS {
 	)
 
 	process {
-		if ( $Name -eq '@' ) {
-			$SubDomain = $ZoneName;
-		} else {
-			$SubDomain = "$Name.$ZoneName";
-		};
-		$NameServer `
-		| % {
-			$NS = $_;
-			if ( -not $NS.EndsWith( '.' ) ) { $NS = "$NS.$ZoneName."; };
-			Write-Verbose "Создаём NS запись для домена $SubDomain ($NS).";
-			$APIParams = @{
-				subdomain = $Name;
-				content = $NS;
-			};
-			if ( $TimeToLive -ne $null ) {
-				if ( $TimeToLive -isnot [System.TimeSpan] ) {
-					$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
-				};
-				$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
-			}
-			if ( $PSCmdlet.ShouldProcess( "NS запись для домена $SubDomain ($NS)", 'Создать' ) ) {
-				Invoke-API `
-					-method 'nsapi/add_ns_record' `
-					-DomainName $ZoneName `
-					-Params $APIParams `
-					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-					-FailureMsgFilter { $_.page.domains.error } `
-				;
-			};
-		};
+		Invoke-APIDnsServerResourceRecord @PSBoundParameters -RRType 'NS' -ContentIsFQDN;
 		if ( $PassThru ) { $input };
 	}
 }
@@ -1023,34 +1050,7 @@ function Add-DnsServerResourceRecordSRV {
 	)
 
 	process {
-		if ( -not $Server.EndsWith( '.' ) ) { $Server = "$Server.$ZoneName."; };
-		$SrvDomain = "$Name.$ZoneName";
-		Write-Verbose "Создаём SRV запись $Name.$ZoneName для домена $ZoneName ($Server).";
-		$APIParams = @{
-			subdomain = $Name;
-			target = $Server;
-			port = $Port;
-			weight = $Weight;
-		};
-		if ( $TimeToLive -ne $null ) {
-			if ( $TimeToLive -isnot [System.TimeSpan] ) {
-				$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
-			};
-			$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
-		}
-		if ( $Preference -ne $null ) {
-			$APIParams.Add( 'priority', $Preference );
-		}
-		if ( $PSCmdlet.ShouldProcess( "SRV запись $Name.$ZoneName для домена $ZoneName ($Server)", 'Создать' ) ) {
-			Invoke-API `
-				-method 'nsapi/add_srv_record' `
-				-DomainName $ZoneName `
-				-Params $APIParams `
-				-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-				-FailureMsgFilter { $_.page.domains.error } `
-			;
-		};
+		Invoke-APIDnsServerResourceRecord @PSBoundParameters -RRType 'SRV' -ContentIsFQDN;
 		if ( $PassThru ) { $input };
 	}
 }
@@ -1131,36 +1131,7 @@ function Add-DnsServerResourceRecordTxt {
 	)
 
 	process {
-		if ( $Name -eq '@' ) {
-			$FQDN = $ZoneName;
-		} else {
-			$FQDN = "$Name.$ZoneName";
-		};
-		$DescriptiveText `
-		| % {
-			$Txt = $_;
-			Write-Verbose "Создаём TXT запись $FQDN для домена $ZoneName ($Txt).";
-			$APIParams = @{
-				subdomain = $Name;
-				content = $Txt;
-			};
-			if ( $TimeToLive -ne $null ) {
-				if ( $TimeToLive -isnot [System.TimeSpan] ) {
-					$TimeToLive = [System.TimeSpan]::FromSeconds( $TimeToLive );
-				};
-				$APIParams.Add( 'ttl', $TimeToLive.TotalSeconds );
-			}
-			if ( $PSCmdlet.ShouldProcess( "TXT запись $FQDN для домена $ZoneName", 'Создать' ) ) {
-				Invoke-API `
-					-method 'nsapi/add_txt_record' `
-					-DomainName $ZoneName `
-					-Params $APIParams `
-					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
-					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
-					-FailureMsgFilter { $_.page.domains.error } `
-				;
-			};
-		};
+		Invoke-APIDnsServerResourceRecord @PSBoundParameters -RRType 'TXT';
 		if ( $PassThru ) { $input };
 	}
 }
@@ -1257,13 +1228,16 @@ function Remove-DnsServerResourceRecord {
 
 	process {
 		if ( -not $id ) {
-			Get-DnsServerResourceRecord `
-				-ZoneName $ZoneName `
-				-Name $Name `
-				-RRType $RRType `
-			| Remove-DnsServerResourceRecord `
-				-ZoneName 'csm.nov.ru' `
-				-RecordData $RecordData `
+			$null = $PSBoundParameters.Remove( 'PassThru' );
+			& {
+				if ( $_ ) {
+					$_ | Get-DnsServerResourceRecord -ZoneName $ZoneName ;
+				} else {
+					Get-DnsServerResourceRecord -ZoneName $ZoneName ;
+				} 
+			} `
+			| ? { $_.RecordType -ne 'SOA' } `
+			| Remove-DnsServerResourceRecord @PSBoundParameters `
 			;
 		} else {
 			if (
@@ -1286,7 +1260,7 @@ function Remove-DnsServerResourceRecord {
 				};
 			};
 		};
-		if ( $PassThru ) { $input };
+		if ( $PassThru ) { $_ };
 	}
 }
 
