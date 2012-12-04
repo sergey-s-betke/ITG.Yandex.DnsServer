@@ -122,3 +122,12 @@ VERBOSE: Ответ API  <?xml version="1.0" encoding="utf-8"?>
 #| Out-GridView ;
 
 # примеры использования DnsServer http://gallery.technet.microsoft.com/scriptcenter/DNS-Server-PowerShell-afc2142b
+
+#Add-DnsServerResourceRecordTxt -ZoneName 'csm.nov.ru' -Text 'v=msv1 t=ddd2e2fe378a4a98d766ea3a278fe8';
+#Add-DnsServerResourceRecordSRV -ZoneName 'csm.nov.ru' -Name '_sipfederationtls._tcp' -Server 'federation.messenger.msn.com.' -Port 5061 -Weight 2 -Preference 10;
+##Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'mail' -HostAliasName 'go.domains.live.com.';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'map' -HostAliasName 'go.domains.live.com.';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'drive' -HostAliasName 'go.domains.live.com.';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'cal' -HostAliasName 'go.domains.live.com.';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'photos' -HostAliasName 'go.domains.live.com.';
+#Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'profile' -HostAliasName 'go.domains.live.com.';
