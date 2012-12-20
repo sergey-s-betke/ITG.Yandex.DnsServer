@@ -19,7 +19,11 @@ Import-Module `
 	) `
 	-Force `
 	-PassThru `
-| Get-Readme -OutDefaultFile `
+| Get-Readme `
+	-OutDefaultFile `
+	-ReferencedModules @(
+		'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module
+	) `
 ;
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'SOA' `
