@@ -187,7 +187,7 @@ function Get-DnsServerResourceRecord {
 			модуля DnsServer Windows Server 2012.
 			Все функции данного модуля используют ITG.Yandex, в частности - Get-Token.
 		.Link
-			[API Яндекс.DNS - get_domain_records](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_get_domain_records.xml)
+			[get_domain_records]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_get_domain_records.xml
 		.Link
 			[MS PowerShell DnsServer - Get-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832924.aspx)
 		.Example
@@ -499,7 +499,7 @@ function Add-DnsServerResourceRecordA {
 			Интерфейс командлета максимально приближен к аналогичному командлету 
 			модуля DnsServer Windows Server 2012. 
 		.Link
-			[API Яндекс.DNS - add_a_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml)
+			[add_a_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml
 		.Link
 			[MS PowerShell DnsServer - Add-DnsServerResourceRecordA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832244.aspx)
 		.Example
@@ -579,7 +579,7 @@ function Add-DnsServerResourceRecordAAAA {
 			Интерфейс командлета максимально приближен к аналогичному командлету 
 			модуля DnsServer Windows Server 2012. 
 		.Link
-			[API Яндекс.DNS - add_aaaa_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_aaaa_record.xml)
+			[add_aaaa_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_aaaa_record.xml
 		.Link
 			[MS PowerShell DnsServer - Add-DnsServerResourceRecordAAAA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832245.aspx)
 		.Example
@@ -665,7 +665,7 @@ function Add-DnsServerResourceRecordCName {
 			дописывает ZoneName + `.`. Введён данный функционал для обеспечения совместимости с 
 			командлетами DnsServer. 
 		.Link
-			[API Яндекс.DNS - add_cname_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_cname_record.xml)
+			[add_cname_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_cname_record.xml
 		.Link
 			[MS PowerShell DnsServer - Add-DnsServerResourceRecordCName](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832246.aspx)
 		.Example
@@ -747,7 +747,7 @@ function Add-DnsServerResourceRecordMX {
 			модуля DnsServer Windows Server 2012. 
 			В описании API на Яндексе закралась ошибка. API принимает и параметр priority. 
 		.Link
-			[API Яндекс.DNS - add_mx_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_mx_record.xml)
+			[add_mx_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_mx_record.xml
 		.Link
 			[MS PowerShell DnsServer - Add-DnsServerResourceRecordMX](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832249.aspx)
 		.Example
@@ -838,7 +838,7 @@ function Add-DnsServerResourceRecordNS {
 			Интерфейс командлета максимально приближен к аналогичному командлету 
 			модуля DnsServer Windows Server 2012. 
 		.Link
-			[API Яндекс.DNS - add_ns_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_ns_record.xml)
+			[add_ns_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_ns_record.xml
 		.Link
 			[MS PowerShell DnsServer - Add-DnsServerResourceRecordNS](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832790.aspx)
 		.Example
@@ -920,11 +920,12 @@ function Add-DnsServerResourceRecordSRV {
 			создания новой SRV записи на "припаркованном" на Яндексе домене. 
 			Интерфейс командлета максимально приближен к аналогичному командлету 
 			модуля DnsServer Windows Server 2012. 
+			
 			To-Do: обнаружил ошибку в API: при создании SRV записи через API Яндекса 
 			возникает ещё одна "фантомная" запись с тем же содержанием, но в состоянии 
 			"добавляется". И так и висит. Удалить её нет возможности...
 		.Link
-			[API Яндекс.DNS - add_srv_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_srv_record.xml)
+			[add_srv_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_srv_record.xml
 		.Link
 			[MS PowerShell DnsServer - Add-DnsServerResourceRecordSRV](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832799.aspx)
 		.Example
@@ -1033,7 +1034,7 @@ function Add-DnsServerResourceRecordTxt {
 			Интерфейс командлета максимально приближен к аналогичному командлету 
 			модуля DnsServer Windows Server 2012. 
 		.Link
-			[API Яндекс.DNS - add_txt_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_txt_record.xml)
+			[add_txt_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_txt_record.xml
 		.Link
 			[MS PowerShell DnsServer - Add-DnsServerResourceRecordTxt](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832800.aspx)
 		.Example
@@ -1114,7 +1115,7 @@ function Remove-DnsServerResourceRecord {
 			Интерфейс командлета максимально приближен к аналогичному командлету 
 			модуля DnsServer Windows Server 2012. 
 		.Link
-			[API Яндекс.DNS - delete_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml)
+			[delete_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml
 		.Link
 			[MS PowerShell DnsServer - Remove-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144.aspx)
 		.Example

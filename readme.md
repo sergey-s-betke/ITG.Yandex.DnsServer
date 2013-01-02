@@ -15,7 +15,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Add-DnsServerResourceRecord][]
 
-Метод (обёртка над Яндекс.API add_a_record) предназначен для
+Метод (обёртка над Яндекс.API [add_a_record][]) предназначен для
 создания новой записи на "припаркованном" на Яндексе домене
 на основе данных о записи из конвейера.
 
@@ -25,7 +25,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Get-DnsServerResourceRecord][]
 
-Метод (обёртка над Яндекс.API get_domain_records) предназначен для
+Метод (обёртка над Яндекс.API [get_domain_records][]) предназначен для
 получения записей из зоны "припаркованного" на Яндексе домене.
 
 	Get-DnsServerResourceRecord [-ZoneName] <String> [[-Name] <String[]>] [[-RRType] <String[]>] [[-RecordData] <String[]>] <CommonParameters>
@@ -34,7 +34,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Remove-DnsServerResourceRecord][]
 
-Метод (обёртка над Яндекс.API delete_record) предназначен для
+Метод (обёртка над Яндекс.API [delete_record][]) предназначен для
 удаления записи из зоны "припаркованного" на Яндексе домене.
 
 	Remove-DnsServerResourceRecord [-ZoneName] <String> [-Name] <String> [[-RRType] <String>] [[-RecordData] <String[]>] [[-id] <String>] [-PassThru] [-Force] [-WhatIf] [-Confirm] <CommonParameters>
@@ -45,7 +45,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Add-DnsServerResourceRecordA][]
 
-Метод (обёртка над Яндекс.API add_a_record) предназначен для
+Метод (обёртка над Яндекс.API [add_a_record][]) предназначен для
 создания новой записи типа A на "припаркованном" на Яндексе домене.
 
 	Add-DnsServerResourceRecordA [-ZoneName] <String> [[-Name] <String>] [-IPv4Address] <IPAddress[]> [[-TimeToLive] <Object>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
@@ -56,7 +56,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Add-DnsServerResourceRecordAAAA][]
 
-Метод (обёртка над Яндекс.API add_aaaa_record) предназначен для
+Метод (обёртка над Яндекс.API [add_aaaa_record][]) предназначен для
 создания новой записи типа AAAA на "припаркованном" на Яндексе домене.
 
 	Add-DnsServerResourceRecordAAAA [-ZoneName] <String> [[-Name] <String>] [-IPv6Address] <IPAddress[]> [[-TimeToLive] <Object>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
@@ -67,7 +67,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Add-DnsServerResourceRecordCName][]
 
-Метод (обёртка над Яндекс.API add_cname_record) предназначен для
+Метод (обёртка над Яндекс.API [add_cname_record][]) предназначен для
 создания новой записи типа CNAME на "припаркованном" на Яндексе домене.
 
 	Add-DnsServerResourceRecordCName [-ZoneName] <String> [-Name] <String> [-HostAliasName] <String> [[-TimeToLive] <Object>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
@@ -78,7 +78,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Add-DnsServerResourceRecordMX][]
 
-Метод (обёртка над Яндекс.API add_mx_record) предназначен для
+Метод (обёртка над Яндекс.API [add_mx_record][]) предназначен для
 создания новой записи типа MX на "припаркованном" на Яндексе домене.
 
 	Add-DnsServerResourceRecordMX [-ZoneName] <String> [[-Name] <String>] [-MailExchange] <String> [[-Preference] <UInt16>] [[-TimeToLive] <Object>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
@@ -89,7 +89,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Add-DnsServerResourceRecordNS][]
 
-Метод (обёртка над Яндекс.API add_ns_record) предназначен для
+Метод (обёртка над Яндекс.API [add_ns_record][]) предназначен для
 создания новой записи типа NS на "припаркованном" на Яндексе домене.
 
 	Add-DnsServerResourceRecordNS [-ZoneName] <String> [[-Name] <String>] [-NameServer] <String[]> [[-TimeToLive] <Object>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
@@ -100,7 +100,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Add-DnsServerResourceRecordSRV][]
 
-Метод (обёртка над Яндекс.API add_srv_record) предназначен для
+Метод (обёртка над Яндекс.API [add_srv_record][]) предназначен для
 создания новой SRV записи на "припаркованном" на Яндексе домене.
 
 	Add-DnsServerResourceRecordSRV [-ZoneName] <String> [-Name] <String> [-Server] <String> [-Port] <UInt16> [[-Preference] <UInt16>] [[-Weight] <UInt16>] [[-TimeToLive] <Object>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
@@ -111,7 +111,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Обзор [Add-DnsServerResourceRecordTxt][]
 
-Метод (обёртка над Яндекс.API add_txt_record) предназначен для
+Метод (обёртка над Яндекс.API [add_txt_record][]) предназначен для
 создания новой записи типа TXT на "припаркованном" на Яндексе домене.
 
 	Add-DnsServerResourceRecordTxt [-ZoneName] <String> [[-Name] <String>] [-DescriptiveText] <String[]> [[-TimeToLive] <Object>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
@@ -123,7 +123,7 @@ Windows Server 2012, но на базе DNS серверов Яндекса (е�
 
 #### Add-DnsServerResourceRecord
 
-Метод (обёртка над Яндекс.API add_a_record) предназначен для
+Метод (обёртка над Яндекс.API [add_a_record][]) предназначен для
 создания новой записи на "припаркованном" на Яндексе домене
 на основе данных о записи из конвейера.
 Параметры в этом командлете не привязаны к конвейеру сознательно: привязка
@@ -211,7 +211,7 @@ API Яндекс.DNS для доменов
 
 #### Get-DnsServerResourceRecord
 
-Метод (обёртка над Яндекс.API get_domain_records) предназначен для
+Метод (обёртка над Яндекс.API [get_domain_records][]) предназначен для
 получения записей из зоны "припаркованного" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -269,12 +269,12 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - get_domain_records](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_get_domain_records.xml)
+- [get_domain_records][]
 - [MS PowerShell DnsServer - Get-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832924.aspx)
 
 #### Remove-DnsServerResourceRecord
 
-Метод (обёртка над Яндекс.API delete_record) предназначен для
+Метод (обёртка над Яндекс.API [delete_record][]) предназначен для
 удаления записи из зоны "припаркованного" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -366,12 +366,12 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - delete_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml)
+- [delete_record][]
 - [MS PowerShell DnsServer - Remove-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144.aspx)
 
 #### Add-DnsServerResourceRecordA
 
-Метод (обёртка над Яндекс.API add_a_record) предназначен для
+Метод (обёртка над Яндекс.API [add_a_record][]) предназначен для
 создания новой записи типа A на "припаркованном" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -447,12 +447,12 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - add_a_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml)
+- [add_a_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832244.aspx)
 
 #### Add-DnsServerResourceRecordAAAA
 
-Метод (обёртка над Яндекс.API add_aaaa_record) предназначен для
+Метод (обёртка над Яндекс.API [add_aaaa_record][]) предназначен для
 создания новой записи типа AAAA на "припаркованном" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -528,12 +528,12 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - add_aaaa_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_aaaa_record.xml)
+- [add_aaaa_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordAAAA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832245.aspx)
 
 #### Add-DnsServerResourceRecordCName
 
-Метод (обёртка над Яндекс.API add_cname_record) предназначен для
+Метод (обёртка над Яндекс.API [add_cname_record][]) предназначен для
 создания новой записи типа A на "припаркованном" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -615,12 +615,12 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - add_cname_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_cname_record.xml)
+- [add_cname_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordCName](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832246.aspx)
 
 #### Add-DnsServerResourceRecordMX
 
-Метод (обёртка над Яндекс.API add_mx_record) предназначен для
+Метод (обёртка над Яндекс.API [add_mx_record][]) предназначен для
 создания новой записи типа MX на "припаркованном" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -704,12 +704,12 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - add_mx_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_mx_record.xml)
+- [add_mx_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordMX](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832249.aspx)
 
 #### Add-DnsServerResourceRecordNS
 
-Метод (обёртка над Яндекс.API add_ns_record) предназначен для
+Метод (обёртка над Яндекс.API [add_ns_record][]) предназначен для
 создания новой записи типа NS на "припаркованном" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -788,12 +788,12 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - add_ns_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_ns_record.xml)
+- [add_ns_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordNS](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832790.aspx)
 
 #### Add-DnsServerResourceRecordSRV
 
-Метод (обёртка над Яндекс.API add_srv_record) предназначен для
+Метод (обёртка над Яндекс.API [add_srv_record][]) предназначен для
 создания новой SRV записи на "припаркованном" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -897,12 +897,12 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - add_srv_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_srv_record.xml)
+- [add_srv_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordSRV](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832799.aspx)
 
 #### Add-DnsServerResourceRecordTxt
 
-Метод (обёртка над Яндекс.API add_txt_record) предназначен для
+Метод (обёртка над Яндекс.API [add_txt_record][]) предназначен для
 создания новой записи типа TXT на "припаркованном" на Яндексе домене.
 Интерфейс командлета максимально приближен к аналогичному командлету
 модуля DnsServer Windows Server 2012.
@@ -979,11 +979,18 @@ API Яндекс.DNS для доменов
 
 ##### Связанные ссылки
 
-- [API Яндекс.DNS - add_txt_record](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_txt_record.xml)
+- [add_txt_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordTxt](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832800.aspx)
 
 
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
+[add_a_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml 
+[add_aaaa_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_aaaa_record.xml 
+[add_cname_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_cname_record.xml 
+[add_mx_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_mx_record.xml 
+[add_ns_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_ns_record.xml 
+[add_srv_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_srv_record.xml 
+[add_txt_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_txt_record.xml 
 [Add-DnsServerResourceRecord]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecord> "Метод (обёртка над Яндекс.API add_a_record) предназначен для создания новой записи на "припаркованном" на Яндексе домене на основе данных о записи из конвейера."
 [Add-DnsServerResourceRecordA]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordA> "Метод (обёртка над Яндекс.API add_a_record) предназначен для создания новой записи типа A на "припаркованном" на Яндексе домене."
 [Add-DnsServerResourceRecordAAAA]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordAAAA> "Метод (обёртка над Яндекс.API add_aaaa_record) предназначен для создания новой записи типа AAAA на "припаркованном" на Яндексе домене."
@@ -992,6 +999,8 @@ API Яндекс.DNS для доменов
 [Add-DnsServerResourceRecordNS]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordNS> "Метод (обёртка над Яндекс.API add_ns_record) предназначен для создания новой записи типа NS на "припаркованном" на Яндексе домене."
 [Add-DnsServerResourceRecordSRV]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordSRV> "Метод (обёртка над Яндекс.API add_srv_record) предназначен для создания новой SRV записи на "припаркованном" на Яндексе домене."
 [Add-DnsServerResourceRecordTxt]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordTxt> "Метод (обёртка над Яндекс.API add_txt_record) предназначен для создания новой записи типа TXT на "припаркованном" на Яндексе домене."
+[delete_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml 
+[get_domain_records]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_get_domain_records.xml 
 [Get-DnsServerResourceRecord]: <ITG.Yandex.DnsServer#Get-DnsServerResourceRecord> "Метод (обёртка над Яндекс.API get_domain_records) предназначен для получения записей из зоны "припаркованного" на Яндексе домене."
 [Get-Token]: <ITG.Yandex#Get-Token> "Метод (обёртка над Яндекс.API get_token) предназначен для получения авторизационного токена."
 [Remove-DnsServerResourceRecord]: <ITG.Yandex.DnsServer#Remove-DnsServerResourceRecord> "Метод (обёртка над Яндекс.API delete_record) предназначен для удаления записи из зоны "припаркованного" на Яндексе домене."
