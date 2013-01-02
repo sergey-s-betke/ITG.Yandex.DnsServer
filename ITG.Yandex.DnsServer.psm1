@@ -184,7 +184,8 @@ function Get-DnsServerResourceRecord {
 			Метод (обёртка над Яндекс.API get_domain_records) предназначен для 
 			получения записей из зоны "припаркованного" на Яндексе домене. 
 			Интерфейс командлета максимально приближен к аналогичному командлету 
-			модуля DnsServer Windows Server 2012. 
+			модуля DnsServer Windows Server 2012.
+			Все функции данного модуля используют ITG.Yandex, в частности - Get-Token.
 		.Link
 			[API Яндекс.DNS - get_domain_records](http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_get_domain_records.xml)
 		.Link
@@ -465,7 +466,7 @@ function Invoke-APIDnsServerResourceRecord {
 		$PSBoundParameters.$ContentParam `
 		| % {
 			$PSBoundParameters.$ContentParam = & {
-				if ( $ContentIsFQDN -and -not $_.EndsWith( `.` ) ) {
+				if ( $ContentIsFQDN -and -not $_.EndsWith( '.' ) ) {
 					"$_.$domain.";
 				} else {
 					$_;
