@@ -18,8 +18,9 @@ Import-Module `
 		-ChildPath 'ITG.Yandex.DnsServer' `
 	) `
 	-Force `
-	-PassThru `
-| Get-Readme `
+;
+Get-Readme `
+	-ModuleInfo ( Get-Module 'ITG.Yandex.DnsServer' ) `
 	-OutDefaultFile `
 	-ReferencedModules @(
 		'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module
@@ -42,6 +43,16 @@ Import-Module `
 #Get-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru' -Name '_xmpp-server3._tcp' `
 #| Remove-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru' -PassThru `
 #| Out-GridView;
+
+#Add-DnsServerResourceRecordSRV `
+#	-ZoneName 'csm.nov.ru' `
+#	-Name '_test5-client._tcp.conference' `
+#	-Server 'mail' `
+#	-Port 20000 `
+#	-Preference 10 `
+#	-Weight 0 `
+#	-Debug `
+#;
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' `
 #| ? { $_.HostName -like '*master' } `
