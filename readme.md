@@ -217,7 +217,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -285,7 +285,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -295,7 +295,7 @@ API Яндекс.DNS для доменов
 
 		Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
 
-##### Связанные ссылки
+##### См. также
 
 - [get_domain_records][]
 - [MS PowerShell DnsServer - Get-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832924.aspx)
@@ -402,7 +402,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -412,7 +412,7 @@ API Яндекс.DNS для доменов
 
 		Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'www2','www3' | Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
 
-##### Связанные ссылки
+##### См. также
 
 - [delete_record][]
 - [MS PowerShell DnsServer - Remove-DnsServerResourceRecord](http://msdn.microsoft.com/en-us/library/windows/desktop/hh833144.aspx)
@@ -499,7 +499,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -509,7 +509,7 @@ API Яндекс.DNS для доменов
 
 		Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'www2' -IPv4Address '172.31.0.8', '172.31.0.7' -TimeToLive 55 ;
 
-##### Связанные ссылки
+##### См. также
 
 - [add_a_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832244.aspx)
@@ -596,7 +596,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -606,7 +606,7 @@ API Яндекс.DNS для доменов
 
 		Add-DnsServerResourceRecordAAAA -ZoneName 'csm.nov.ru' -Name 'www2' -IPv6Address '::1';
 
-##### Связанные ссылки
+##### См. также
 
 - [add_aaaa_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordAAAA](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832245.aspx)
@@ -699,17 +699,17 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
 ##### Примеры использования
 
-1. Создаём CName www2 как псевдоним к www.csm.nov.ru.
+1. Создаём CName www2 как псевдоним к <http://www.csm.nov.ru>.
 
 		Add-DnsServerResourceRecordCName -ZoneName 'csm.nov.ru' -Name 'www2' -HostAliasName 'www';
 
-##### Связанные ссылки
+##### См. также
 
 - [add_cname_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordCName](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832246.aspx)
@@ -806,7 +806,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -816,7 +816,7 @@ API Яндекс.DNS для доменов
 
 		Add-DnsServerResourceRecordMX -ZoneName 'csm.nov.ru' -MailExchange 'mx.yandex.ru.';
 
-##### Связанные ссылки
+##### См. также
 
 - [add_mx_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordMX](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832249.aspx)
@@ -848,8 +848,7 @@ API Яндекс.DNS для доменов
         Принимать подстановочные знаки?
 
 - `Name <String>`
-        Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneNam
-        e).
+        Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneName).
 
         Требуется? false
         Позиция? 2
@@ -906,7 +905,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -916,7 +915,7 @@ API Яндекс.DNS для доменов
 
 		Add-DnsServerResourceRecordNS -ZoneName 'csm.nov.ru' -Name 'support' -NameServer 'ns.csm.nov.ru.';
 
-##### Связанные ссылки
+##### См. также
 
 - [add_ns_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordNS](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832790.aspx)
@@ -1034,7 +1033,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -1048,7 +1047,7 @@ API Яндекс.DNS для доменов
 
 		Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'SRV' | ? { $_.HostName -like '*xmpp*' } | Add-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru';
 
-##### Связанные ссылки
+##### См. также
 
 - [add_srv_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordSRV](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832799.aspx)
@@ -1080,8 +1079,7 @@ API Яндекс.DNS для доменов
         Принимать подстановочные знаки?
 
 - `Name <String>`
-        Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneNam
-        e).
+        Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneName).
 
         Требуется? false
         Позиция? 2
@@ -1136,7 +1134,7 @@ API Яндекс.DNS для доменов
         Данный командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений введите
-        "get-help [about_CommonParameters][]".
+        [`get-help about_CommonParameters`][about_CommonParameters].
 
 
 
@@ -1146,13 +1144,13 @@ API Яндекс.DNS для доменов
 
 		Add-DnsServerResourceRecordTxt -ZoneName 'csm.nov.ru' -Name 'hostmaster' -Text 'IT department of CSM of Velikiy Novgorod. Sergey S. Betke.';
 
-##### Связанные ссылки
+##### См. также
 
 - [add_txt_record][]
 - [MS PowerShell DnsServer - Add-DnsServerResourceRecordTxt](http://msdn.microsoft.com/en-us/library/windows/desktop/hh832800.aspx)
 
 
-[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Описание параметров, которые могут использоваться с любым командлетом."
+[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 
 [add_a_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_a_record.xml 
 [add_aaaa_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_aaaa_record.xml 
 [add_cname_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_cname_record.xml 
