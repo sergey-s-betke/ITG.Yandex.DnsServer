@@ -247,6 +247,8 @@ function Get-DnsServerResourceRecord {
 				-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
 				-FailureMsgFilter { $_.page.domains.error } `
 				-ResultFilter { $_.page.domains.domain.response.record } `
+				-Debug:$DebugPreference `
+				-Verbose:$VerbosePreference `
 			| ConvertFrom-YandexDnsServerResourceRecord `
 			| ? { $_.id -ne 0 } `
 		);
@@ -473,13 +475,21 @@ function Invoke-APIDnsServerResourceRecord {
 				}
 			};
 			if ( $PSCmdlet.ShouldProcess( "$RRType запись $subdomain (в зоне $domain, $_)", 'Создать' ) ) {
+				$Params = @{};
+				foreach ( $Param in 'domain', 'subdomain', 'content', 'ttl', 'target', 'priority', 'port', 'weight' ) {
+					if ( $PSBoundParameters.ContainsKey( $Param ) ) {
+						$Params.Add( $Param, $PSBoundParameters.$Param );
+					};
+				};
 				Invoke-API `
 					-method "nsapi/add_$( $RRType.ToLower() )_record" `
 					-DomainName $domain `
-					-Params $PSBoundParameters `
+					-Params $Params `
 					-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
 					-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
 					-FailureMsgFilter { $_.page.domains.error } `
+					-Debug:$DebugPreference `
+					-Verbose:$VerbosePreference `
 				;
 			};
 		};
@@ -1217,6 +1227,8 @@ function Remove-DnsServerResourceRecord {
 						-IsSuccessPredicate { $_.page.domains.error -eq 'ok' } `
 						-IsFailurePredicate { $_.page.domains.error -ne 'ok' } `
 						-FailureMsgFilter { $_.page.domains.error } `
+						-Debug:$DebugPreference `
+						-Verbose:$VerbosePreference `
 					;
 				};
 			};
