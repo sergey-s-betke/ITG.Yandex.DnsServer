@@ -35,8 +35,8 @@ Set-Token `
 $PSDefaultParameterValues['*:DomainName'] = 'csm.nov.ru';
 $PSDefaultParameterValues['*:ZoneName'] = 'csm.nov.ru';
 
-Get-DnsServerResourceRecord -RRType 'SOA' `
-| Out-GridView;
+#Get-DnsServerResourceRecord -RRType 'SOA' `
+#| Out-GridView;
 
 #Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -Name 'test' `
 #| Remove-DnsServerResourceRecord -ZoneName 'csm.nov.ru';
@@ -67,8 +67,8 @@ Get-DnsServerResourceRecord -RRType 'SOA' `
 #| Add-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru' -PassThru `
 #| Out-GridView;
 
-#Get-DnsServerResourceRecord -ZoneName 'csm.nov.ru' -RRType 'A','CNAME','NS' `
-#| Out-GridView;
+Get-DnsServerResourceRecord -RRType 'A','CNAME','NS' `
+| Out-GridView;
 
 #Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'www4' -IPv4Address '172.31.0.9';
 #Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'www5' -IPv4Address '172.31.0.9', '172.31.0.10';
