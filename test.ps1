@@ -15,13 +15,12 @@ param (
 Import-Module `
 	(Join-Path `
 		-Path ( Split-Path -Path ( $MyInvocation.MyCommand.Path ) -Parent ) `
-		-ChildPath 'ITG.Yandex.DnsServer' `
+		-ChildPath 'ITG.Yandex.DnsServer.psd1' `
 	) `
 	-Force `
 ;
-Get-Readme `
+Set-Readme `
 	-ModuleInfo ( Get-Module 'ITG.Yandex.DnsServer' ) `
-	-OutDefaultFile `
 	-ReferencedModules @(
 		'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module
 	) `
