@@ -102,6 +102,8 @@ FileList = `
 ;
 
 # Личные данные, передаваемые в модуль, указанный в параметре ModuleToProcess
-PrivateData = ''
+PrivateData = @{
+    ReadmeURL = 'https://github.com/IT-Service/ITG.Yandex.DnsServer';
+}
 
 }

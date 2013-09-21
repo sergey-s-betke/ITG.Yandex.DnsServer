@@ -1176,7 +1176,7 @@ API Яндекс.DNS для доменов
 [delete_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml 
 [get_domain_records]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_get_domain_records.xml 
 [Get-DnsServerResourceRecord]: <#get-dnsserverresourcerecord> "Метод (обёртка над Яндекс.API get_domain_records) предназначен для получения записей из зоны "припаркованного" на Яндексе домене."
-[Get-Token]: <#get-token> "Метод (обёртка над Яндекс.API get_token) предназначен для получения авторизационного токена."
+[Get-Token]: <https://github.com/IT-Service/ITG.Yandex#get-token> "Метод (обёртка над Яндекс.API get_token) предназначен для получения авторизационного токена."
 [Remove-DnsServerResourceRecord]: <#remove-dnsserverresourcerecord> "Метод (обёртка над Яндекс.API delete_record) предназначен для удаления записи из зоны "припаркованного" на Яндексе домене."
 
 ---------------------------------------
