@@ -6,6 +6,15 @@ param (
 )
 
 Import-Module `
+	'ITG.Yandex.DnsServer' `
+	-Force `
+;
+Set-Readme `
+	-ModuleInfo ( Get-Module 'ITG.Yandex.DnsServer' ) `
+;
+
+<#
+Import-Module `
 	(Join-Path `
 		-Path ( Split-Path -Path ( $MyInvocation.MyCommand.Path ) -Parent ) `
 		-ChildPath 'ITG.Yandex.DnsServer.psd1' `
@@ -18,6 +27,8 @@ Set-Readme `
 		'ITG.Yandex', 'ITG.Utils', 'ITG.WinAPI.UrlMon', 'ITG.WinAPI.User32' | Get-Module
 	) `
 ;
+#>
+
 
 Set-Token `
     -DomainName 'csm.nov.ru' `
@@ -35,6 +46,7 @@ Set-Token `
 $PSDefaultParameterValues['*:DomainName'] = 'csm.nov.ru';
 $PSDefaultParameterValues['*:ZoneName'] = 'csm.nov.ru';
 
+<#
 Remove-DnsServerResourceRecord -Name 'autodiscover' -RRType CNAME;
 Add-DnsServerResourceRecordCName -Name 'autodiscover' -HostAliasName 'gate';
 Remove-DnsServerResourceRecord -Name '_autodiscover._tcp' -RRType SRV;
@@ -57,7 +69,7 @@ Add-DnsServerResourceRecordSRV -Name '_smtp._tcp' -Server 'smtp' -Port 465;
 
 Get-DnsServerResourceRecord -RRType 'SRV','CNAME','A','MX' `
 | Out-GridView;
-
+#>
 #Get-DnsServerResourceRecord -RRType 'SOA' `
 #| Out-GridView;
 
