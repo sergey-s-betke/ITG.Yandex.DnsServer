@@ -35,6 +35,29 @@ Set-Token `
 $PSDefaultParameterValues['*:DomainName'] = 'csm.nov.ru';
 $PSDefaultParameterValues['*:ZoneName'] = 'csm.nov.ru';
 
+Remove-DnsServerResourceRecord -Name 'autodiscover' -RRType CNAME;
+Add-DnsServerResourceRecordCName -Name 'autodiscover' -HostAliasName 'gate';
+Remove-DnsServerResourceRecord -Name '_autodiscover._tcp' -RRType SRV;
+Add-DnsServerResourceRecordSRV -Name '_autodiscover._tcp' -Server 'autodiscover' -Port 443;
+
+Remove-DnsServerResourceRecord -Name 'imap' -RRType CNAME;
+Add-DnsServerResourceRecordCName -Name 'imap' -HostAliasName 'imap.yandex.ru.';
+Remove-DnsServerResourceRecord -Name '_imap._tcp' -RRType SRV;
+Add-DnsServerResourceRecordSRV -Name '_imap._tcp' -Server 'imap' -Port 993;
+
+Remove-DnsServerResourceRecord -Name 'pop3' -RRType CNAME;
+Add-DnsServerResourceRecordCName -Name 'pop3' -HostAliasName 'pop.yandex.ru.';
+Remove-DnsServerResourceRecord -Name '_pop3._tcp' -RRType SRV;
+Add-DnsServerResourceRecordSRV -Name '_pop3._tcp' -Server 'pop3' -Port 995;
+
+Remove-DnsServerResourceRecord -Name 'smtp' -RRType CNAME;
+Add-DnsServerResourceRecordCName -Name 'smtp' -HostAliasName 'smtp.yandex.ru.';
+Remove-DnsServerResourceRecord -Name '_smtp._tcp' -RRType SRV;
+Add-DnsServerResourceRecordSRV -Name '_smtp._tcp' -Server 'smtp' -Port 465;
+
+Get-DnsServerResourceRecord -RRType 'SRV','CNAME','A','MX' `
+| Out-GridView;
+
 #Get-DnsServerResourceRecord -RRType 'SOA' `
 #| Out-GridView;
 
@@ -66,9 +89,6 @@ $PSDefaultParameterValues['*:ZoneName'] = 'csm.nov.ru';
 #| ? { $_.HostName -like '*master' } `
 #| Add-DnsServerResourceRecord -ZoneName 'nice-tour.nov.ru' -PassThru `
 #| Out-GridView;
-
-Get-DnsServerResourceRecord -RRType 'A','CNAME','NS' `
-| Out-GridView;
 
 #Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'www4' -IPv4Address '172.31.0.9';
 #Add-DnsServerResourceRecordA -ZoneName 'csm.nov.ru' -Name 'www5' -IPv4Address '172.31.0.9', '172.31.0.10';

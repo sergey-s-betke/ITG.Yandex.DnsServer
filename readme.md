@@ -6,7 +6,7 @@
 Windows Server 2012, но на базе DNS серверов Яндекса (естественно, с ограничениями),
 интерфейс максимально приближен к интерфейсу командлет модуля DNSServer.
 
-Версия модуля: **2.1.0**
+Версия модуля: **2.2.0**
 
 Функции модуля
 --------------
@@ -217,7 +217,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -285,7 +285,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -402,7 +402,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -500,7 +500,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -598,7 +598,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -702,7 +702,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -810,7 +810,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -852,8 +852,7 @@ API Яндекс.DNS для доменов
         Принимать подстановочные знаки?false
 
 - `Name <String>`
-        Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneNam
-        e).
+        Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneName).
 
         Требуется? false
         Позиция? 2
@@ -911,7 +910,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -1040,7 +1039,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -1086,8 +1085,7 @@ API Яндекс.DNS для доменов
         Принимать подстановочные знаки?false
 
 - `Name <String>`
-        Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneNam
-        e).
+        Поддомен. Если значение параметра не указано, будет создана дополнительная NS запись для основного домена (ZoneName).
 
         Требуется? false
         Позиция? 2
@@ -1143,7 +1141,7 @@ API Яндекс.DNS для доменов
         Этот командлет поддерживает общие параметры: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
         OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-        [about_CommonParameters][] (http://go.microsoft.com/fwlink/?LinkID=113216).
+        [about_CommonParameters][].
 
 
 
@@ -1167,19 +1165,19 @@ API Яндекс.DNS для доменов
 [add_ns_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_ns_record.xml 
 [add_srv_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_srv_record.xml 
 [add_txt_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_add_txt_record.xml 
-[Add-DnsServerResourceRecord]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecord> "Метод (обёртка над Яндекс.API add_a_record) предназначен для создания новой записи на "припаркованном" на Яндексе домене на основе данных о записи из конвейера."
-[Add-DnsServerResourceRecordA]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordA> "Метод (обёртка над Яндекс.API add_a_record) предназначен для создания новой записи типа A на "припаркованном" на Яндексе домене."
-[Add-DnsServerResourceRecordAAAA]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordAAAA> "Метод (обёртка над Яндекс.API add_aaaa_record) предназначен для создания новой записи типа AAAA на "припаркованном" на Яндексе домене."
-[Add-DnsServerResourceRecordCName]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordCName> "Метод (обёртка над Яндекс.API add_cname_record) предназначен для создания новой записи типа CNAME на "припаркованном" на Яндексе домене."
-[Add-DnsServerResourceRecordMX]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordMX> "Метод (обёртка над Яндекс.API add_mx_record) предназначен для создания новой записи типа MX на "припаркованном" на Яндексе домене."
-[Add-DnsServerResourceRecordNS]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordNS> "Метод (обёртка над Яндекс.API add_ns_record) предназначен для создания новой записи типа NS на "припаркованном" на Яндексе домене."
-[Add-DnsServerResourceRecordSRV]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordSRV> "Метод (обёртка над Яндекс.API add_srv_record) предназначен для создания новой SRV записи на "припаркованном" на Яндексе домене."
-[Add-DnsServerResourceRecordTxt]: <ITG.Yandex.DnsServer#Add-DnsServerResourceRecordTxt> "Метод (обёртка над Яндекс.API add_txt_record) предназначен для создания новой записи типа TXT на "припаркованном" на Яндексе домене."
+[Add-DnsServerResourceRecord]: <#add-dnsserverresourcerecord> "Метод (обёртка над Яндекс.API add_a_record) предназначен для создания новой записи на "припаркованном" на Яндексе домене на основе данных о записи из конвейера."
+[Add-DnsServerResourceRecordA]: <#add-dnsserverresourcerecorda> "Метод (обёртка над Яндекс.API add_a_record) предназначен для создания новой записи типа A на "припаркованном" на Яндексе домене."
+[Add-DnsServerResourceRecordAAAA]: <#add-dnsserverresourcerecordaaaa> "Метод (обёртка над Яндекс.API add_aaaa_record) предназначен для создания новой записи типа AAAA на "припаркованном" на Яндексе домене."
+[Add-DnsServerResourceRecordCName]: <#add-dnsserverresourcerecordcname> "Метод (обёртка над Яндекс.API add_cname_record) предназначен для создания новой записи типа CNAME на "припаркованном" на Яндексе домене."
+[Add-DnsServerResourceRecordMX]: <#add-dnsserverresourcerecordmx> "Метод (обёртка над Яндекс.API add_mx_record) предназначен для создания новой записи типа MX на "припаркованном" на Яндексе домене."
+[Add-DnsServerResourceRecordNS]: <#add-dnsserverresourcerecordns> "Метод (обёртка над Яндекс.API add_ns_record) предназначен для создания новой записи типа NS на "припаркованном" на Яндексе домене."
+[Add-DnsServerResourceRecordSRV]: <#add-dnsserverresourcerecordsrv> "Метод (обёртка над Яндекс.API add_srv_record) предназначен для создания новой SRV записи на "припаркованном" на Яндексе домене."
+[Add-DnsServerResourceRecordTxt]: <#add-dnsserverresourcerecordtxt> "Метод (обёртка над Яндекс.API add_txt_record) предназначен для создания новой записи типа TXT на "припаркованном" на Яндексе домене."
 [delete_record]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_delete_record.xml 
 [get_domain_records]: http://api.yandex.ru/pdd/doc/api-pdd/reference/api-dns_get_domain_records.xml 
-[Get-DnsServerResourceRecord]: <ITG.Yandex.DnsServer#Get-DnsServerResourceRecord> "Метод (обёртка над Яндекс.API get_domain_records) предназначен для получения записей из зоны "припаркованного" на Яндексе домене."
-[Get-Token]: <ITG.Yandex#Get-Token> "Метод (обёртка над Яндекс.API get_token) предназначен для получения авторизационного токена."
-[Remove-DnsServerResourceRecord]: <ITG.Yandex.DnsServer#Remove-DnsServerResourceRecord> "Метод (обёртка над Яндекс.API delete_record) предназначен для удаления записи из зоны "припаркованного" на Яндексе домене."
+[Get-DnsServerResourceRecord]: <#get-dnsserverresourcerecord> "Метод (обёртка над Яндекс.API get_domain_records) предназначен для получения записей из зоны "припаркованного" на Яндексе домене."
+[Get-Token]: <#get-token> "Метод (обёртка над Яндекс.API get_token) предназначен для получения авторизационного токена."
+[Remove-DnsServerResourceRecord]: <#remove-dnsserverresourcerecord> "Метод (обёртка над Яндекс.API delete_record) предназначен для удаления записи из зоны "припаркованного" на Яндексе домене."
 
 ---------------------------------------
 
